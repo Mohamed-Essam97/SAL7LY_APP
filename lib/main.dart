@@ -1,39 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:sal7ly_firebase/Firebase/Firebase.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sal7ly_firebase/Firebase/BusinessOwnerRegister.dart';
-import 'package:sal7ly_firebase/Design/SplashScreen.dart';
-import 'package:sal7ly_firebase/Design/demo.dart';
-import 'package:sal7ly_firebase/Design/3rabiti.dart';
-import 'package:sal7ly_firebase/Firebase/camera.dart';
-import 'package:sal7ly_firebase/Firebase/Service_Owner_Data.dart';
-import 'package:sal7ly_firebase/Firebase/Firebase.dart';
+import 'package:sal7ly_firebase/screens/onboarding.dart';
+import 'package:sal7ly_firebase/screens/Welcome.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sal7ly_firebase/utilties/app_theme.dart';
 
 
-import 'package:sal7ly_firebase/onBording/first.dart';
+main() async {
 
-void main() => runApp(MAIN());
+  WidgetsFlutterBinding.ensureInitialized();
+  Widget screen;
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool seen = prefs.getBool('seen');
+  if (seen == null || seen == false)
+  {
 
-class MAIN extends StatelessWidget {
+    screen = OnBoarding();
+
+  }
+  else
+  {
+
+    screen = HomeScreen();
+
+  }
+
+  runApp( NewsApp(screen));
+
+}
+
+
+class NewsApp extends StatelessWidget
+{
+
+
+  final Widget _screen;
+
+
+  NewsApp(this._screen);
+
   @override
   Widget build(BuildContext context) {
+    // TODO: implement build
     return MaterialApp(
-      title: 'Flutter Onboarding UI',
       debugShowCheckedModeBanner: false,
-      home:  MyApp(),
+      theme: AppTheme.appTheme,
+      home: this._screen,
     );
   }
-}
-
-
-
-/*
-void main() {
-
-  runApp(new MaterialApp(
-    home: (MyApp()),
-  ) );
 
 }
-*/
-
