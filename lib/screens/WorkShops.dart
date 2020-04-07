@@ -35,14 +35,15 @@ class _Work_ShopsState extends State<Work_Shops> {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _drawBody(),
-                      _drawTitle(),
-                      _drawHeader(),
-                    ],
-                  ),
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children: <Widget>[
+                     _drawBody(),
+                     _drawTitle(),
+                     _drawHeader(),
+                   ],
+                 ),
+
                 ),
               );
             },

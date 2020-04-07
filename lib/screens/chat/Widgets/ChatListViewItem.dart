@@ -55,20 +55,20 @@ class ChatListViewItem extends StatelessWidget {
                       ),
                       hasUnreadMessage
                           ? Container(
-                        margin: const EdgeInsets.only(top: 5.0),
-                        height: 18,
-                        width: 18,
-                        decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(25.0),
-                            )),
-                        child: Center(
-                            child: Text(
-                              newMesssageCount.toString(),
-                              style: TextStyle(fontSize: 11),
-                            )),
-                      )
+                              margin: const EdgeInsets.only(top: 5.0),
+                              height: 18,
+                              width: 18,
+                              decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(25.0),
+                                  )),
+                              child: Center(
+                                  child: Text(
+                                newMesssageCount.toString(),
+                                style: TextStyle(fontSize: 11),
+                              )),
+                            )
                           : SizedBox()
                     ],
                   ),

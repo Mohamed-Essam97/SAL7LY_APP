@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sal7ly_firebase/firebase_login/loginpage.dart';
+import 'package:sal7ly_firebase/firebase_login/signuppage.dart';
 
 import 'Home_Screen.dart';
 
@@ -82,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             //                     _updateSeen();
                             //TODO: Update Seen
-                            return Home_Screen_Main();
+                            return LoginPage();
                           },
                         ),
                       );
@@ -96,6 +98,17 @@ class _HomeScreenState extends State<HomeScreen> {
             offset: Offset(0,40),
               child: InkWell(
                 child: Text("Sign up",style: TextStyle(color: _colorBlack,fontSize: 20),),
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                         //TODO: Update Seen
+                        return SignupPage();
+                      },
+                    ),
+                  );
+                },
               )
           ),
         ],

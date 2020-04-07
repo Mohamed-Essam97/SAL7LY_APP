@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sal7ly_firebase/firebase_login/home.dart';
 import 'package:sal7ly_firebase/models/onboarding_model.dart';
 import 'package:page_view_indicator/page_view_indicator.dart';
 import 'package:sal7ly_firebase/screens/Welcome.dart';
@@ -150,7 +151,7 @@ class _OnBoardingState extends State<OnBoarding> {
 
      //                     _updateSeen();
                           //TODO: Update Seen
-                          return HomeScreen();
+                          return MyApp();
                         },
                       ),
                     );
