@@ -15,6 +15,8 @@ class _SignupPageState extends State<SignupPage> {
   String _email;
   String _password;
 
+  UserManagement userManagement =new UserManagement();
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -46,13 +48,12 @@ class _SignupPageState extends State<SignupPage> {
                     textColor: Colors.white,
                     elevation: 7.0,
                     onPressed: () {
-                      FirebaseAuth.instance
+                    FirebaseAuth.instance
                           .createUserWithEmailAndPassword(
                           email: _email, password: _password)
                           .then((signedInUser) {
-                            Navigator.of(context).pushReplacementNamed('/homepage');
-                            UserManagement().storeNewUser(signedInUser, context);
-                        }).catchError((e) {
+                            userManagement.storeNewUser(signedInUser.user, context);
+                    }).catchError((e) {
                         print(e);
                       });
                     },
@@ -61,4 +62,5 @@ class _SignupPageState extends State<SignupPage> {
               )),
         ));
   }
+
 }

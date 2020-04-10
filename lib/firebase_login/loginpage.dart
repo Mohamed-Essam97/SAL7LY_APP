@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sal7ly_firebase/firebase_login/home.dart';
 import 'package:sal7ly_firebase/firebase_login/homepage.dart';
 import 'package:sal7ly_firebase/firebase_login/signuppage.dart';
+import 'package:sal7ly_firebase/screens/Home_Screen.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -53,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                           .signInWithEmailAndPassword(
                           email: _email, password: _password)
                           .then((AuthResult auth) {
-                        Navigator.of(context).pushReplacementNamed('/homepage');
+                        Navigator.push(context, new MaterialPageRoute(builder: (context) => Home_Screen_Main()));
                       }).catchError((e) {
                         print(e);
                       });
