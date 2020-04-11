@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sal7ly_firebase/firebase_login/services/usermanagment.dart';
+import 'package:sal7ly_firebase/screens/add_Service.dart';
 import 'package:sal7ly_firebase/share_ui/navigation_drawer.dart';
 import 'package:sal7ly_firebase/screens/chat.dart';
 import 'package:sal7ly_firebase/screens/profile.dart';
@@ -38,6 +40,9 @@ class _Home_Screen_MainState extends State<Home_Screen_Main> {
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text("SAL7LY",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
@@ -54,7 +59,9 @@ class _Home_Screen_MainState extends State<Home_Screen_Main> {
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           backgroundColor: Colors.green ,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, '/AddService');
+          },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: BottomAppBar(
@@ -185,4 +192,13 @@ class _Home_Screen_MainState extends State<Home_Screen_Main> {
         ),
     );
   }
+
+
+
+  someMethod() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    print(user.uid);
+    }
+
+
 }

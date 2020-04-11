@@ -7,21 +7,17 @@ import 'package:sal7ly_firebase/firebase_login/homepage.dart';
 import 'package:sal7ly_firebase/screens/Home_Screen.dart';
 
 class UserManagement {
-  storeNewUser(user, context) {
 
-    Firestore.instance.collection('service_owner').document().setData({
-      'email' : user.email,
-      'uid' : user.uid
-    }).then((value){
+  DocumentReference ref;
 
-      Navigator.push(context, new MaterialPageRoute(builder: (context) => Home_Screen_Main()));
-
-    }).catchError((e){
-      print(e);
-    });
-
-
-
-
-  }
+  storeNewUser(user, context) async {
+    ref = await Firestore.instance.collection('service_owner').document('${user.uid}').setData({
+        'email': user.email,
+        'uid': user.uid
+      }).then((value) {
+        Navigator.pushNamed(context, '/Home');
+      }).catchError((e) {
+        print(e);
+      });
+    }
 }

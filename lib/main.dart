@@ -4,6 +4,8 @@ import 'package:sal7ly_firebase/screens/Welcome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sal7ly_firebase/utilties/app_theme.dart';
 
+import 'Routes/routes.dart';
+
 
 main() async {
 
@@ -42,6 +44,7 @@ class NewsApp extends StatelessWidget
   Widget build(BuildContext context) {
     // TODO: implement build
     return MaterialApp(
+      routes: routes,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.appTheme,
       home: this._screen,

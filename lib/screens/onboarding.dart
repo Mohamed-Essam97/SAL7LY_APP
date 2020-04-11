@@ -149,7 +149,7 @@ class _OnBoardingState extends State<OnBoarding> {
                       MaterialPageRoute(
                         builder: (context) {
 
-     //                     _updateSeen();
+                          _updateSeen();
                           //TODO: Update Seen
                           return MyApp();
                         },
@@ -187,11 +187,11 @@ class _OnBoardingState extends State<OnBoarding> {
     );
   }
 
-/*  void _updateSeen() async
+  void _updateSeen() async
   {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('seen', true);
-  }*/
+  }
 }
 
 

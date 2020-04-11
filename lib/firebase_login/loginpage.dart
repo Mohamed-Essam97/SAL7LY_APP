@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                           .signInWithEmailAndPassword(
                           email: _email, password: _password)
                           .then((AuthResult auth) {
-                        Navigator.push(context, new MaterialPageRoute(builder: (context) => Home_Screen_Main()));
+                        Navigator.pushNamed(context, '/Home');
                       }).catchError((e) {
                         print(e);
                       });
@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                     textColor: Colors.white,
                     elevation: 7.0,
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/signup');
+                      Navigator.of(context).pushNamed('/Signup');
                     },
                   ),
                 ],

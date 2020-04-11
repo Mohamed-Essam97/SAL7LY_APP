@@ -77,17 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.white, fontSize: 26, letterSpacing: 1),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
 
-                            //                     _updateSeen();
-                            //TODO: Update Seen
-                            return LoginPage();
-                          },
-                        ),
-                      );
+                      Navigator.pushNamed(context, '/Login');
+
                     },
                   ),
                 ),
@@ -99,15 +91,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: InkWell(
                 child: Text("Sign up",style: TextStyle(color: _colorBlack,fontSize: 20),),
                 onTap: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                         //TODO: Update Seen
-                        return SignupPage();
-                      },
-                    ),
-                  );
+
+                  Navigator.pushNamed(context, '/Signup');
+
                 },
               )
           ),
