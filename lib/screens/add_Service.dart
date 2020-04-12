@@ -32,6 +32,8 @@ class _Add_ServiceState extends State<Add_Service> {
   String offDay1, offDay2;
   String startTime, endTime;
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,119 +45,127 @@ class _Add_ServiceState extends State<Add_Service> {
           backgroundColor: myColors.red[900],
           centerTitle: true,
         ),
-        body: ListView(
-          children: <Widget>[
+        body: Container(
+          child: Column(
+            children: <Widget>[
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                        decoration: const InputDecoration(
+                          icon: const Icon(Icons.person),
+                          hintText: 'Enter your Service name',
+                          labelText: 'Service Name',
+                        ),
+                        onChanged: (value) {
+                        setState(() {
+                        serviceName = value;
+                        });
+                    }  // The validator receives the text that the user has entered.
+                    ),
+                    TextFormField(
+                        decoration: const InputDecoration(
+                          icon: const Icon(Icons.person),
+                          hintText: 'Enter your Service Phone Number',
+                          labelText: 'Phone Number',
+                        ),
+                        onChanged: (value) {
+                        setState(() {
+                        phoneNumber1 = value;
+                        });
+                    }  // The validator receives the text that the user has entered.
+                    ),
+                    TextFormField(
+                        decoration: const InputDecoration(
+                          icon: const Icon(Icons.person),
+                          hintText: 'Enter your Service Phone Number',
+                          labelText: 'another Phone Number',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            phoneNumber2 = value;
+                          });
+                        }  // The validator receives the text that the user has entered.
+                    ),
+                    TextFormField(
+                        decoration: const InputDecoration(
+                          icon: const Icon(Icons.person),
+                          hintText: 'Enter Service Type',
+                          labelText: 'Service Type',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            serviceType = value;
+                          });
+                        }  // The validator receives the text that the user has entered.
+                    ),
+                    TextFormField(
+                        decoration: const InputDecoration(
+                          icon: const Icon(Icons.person),
+                          hintText: 'Enter your Service Specialization',
+                          labelText: 'Service Specialization',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            specialization = value;
+                          });
+                        }  // The validator receives the text that the user has entered.
+                    ),
+                    TextFormField(
+                        decoration: const InputDecoration(
+                          icon: const Icon(Icons.person),
+                          hintText: 'Enter your Service Max Price',
+                          labelText: 'Max Price',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            maxPrice = value;
+                          });
+                        }  // The validator receives the text that the user has entered.
+                    ),
+                    TextFormField(
+                        decoration: const InputDecoration(
+                          icon: const Icon(Icons.person),
+                          hintText: 'Enter your Service Min Price',
+                          labelText: 'Min Price',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            minPrice = value;
+                          });
+                        }  // The validator receives the text that the user has entered.
+                    ),
+                    TextFormField(
+                        decoration: const InputDecoration(
+                          icon: const Icon(Icons.person),
+                          hintText: 'Enter your Service off Days',
+                          labelText: 'offDays',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            offDay1 = value;
+                          });
+                        }  // The validator receives the text that the user has entered.
+                    ),
 
-          ],
-        ));
+                    RaisedButton(
+                      child: Text('ADD DATA'),
+                      color: Colors.blue,
+                      textColor: Colors.white,
+                      elevation: 7.0,
+                      onPressed: () {
+                      addServiceData();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+    );
   }
-
-  /*TextField(
-  decoration: InputDecoration(hintText: 'Add Service Image'),
-  onChanged: (value) {
-  setState(() {
-  image = value;
-  });
-  }),
-  TextField(
-  decoration: InputDecoration(hintText: 'Service Name'),
-  onChanged: (value) {
-  setState(() {
-  serviceName = value;
-  });
-  }),
-  Row(
-  children: <Widget>[
-  TextField(
-  decoration: InputDecoration(hintText: 'Phone Number'),
-  onChanged: (value) {
-  setState(() {
-  phoneNumber1 = value;
-  });
-  }),
-  TextField(
-  decoration:
-  InputDecoration(hintText: 'Another Phone Number'),
-  onChanged: (value) {
-  setState(() {
-  phoneNumber2 = value;
-  });
-  }),
-  ],
-  ),
-  Row(
-  children: <Widget>[
-  TextField(
-  decoration: InputDecoration(hintText: 'Specialization'),
-  onChanged: (value) {
-  setState(() {
-  specialization = value;
-  });
-  }),
-  TextField(
-  decoration: InputDecoration(hintText: 'Service Type'),
-  onChanged: (value) {
-  setState(() {
-  serviceType = value;
-  });
-  }),
-  ],
-  ),
-  Row(
-  children: <Widget>[
-  TextField(
-  decoration: InputDecoration(hintText: 'Max Price'),
-  onChanged: (value) {
-  setState(() {
-  maxPrice = value;
-  });
-  }),
-  TextField(
-  decoration: InputDecoration(hintText: 'Minimum Price '),
-  onChanged: (value) {
-  setState(() {
-  minPrice = value;
-  });
-  }),
-  ],
-  ),
-  Row(
-  children: <Widget>[
-  TextField(
-  decoration: InputDecoration(hintText: 'Day off 1'),
-  onChanged: (value) {
-  setState(() {
-  offDay1 = value;
-  });
-  }),
-  TextField(
-  decoration: InputDecoration(hintText: 'Day off 2'),
-  onChanged: (value) {
-  setState(() {
-  offDay2 = value;
-  });
-  }),
-  ],
-  ),
-  Row(
-  children: <Widget>[
-  TextField(
-  decoration: InputDecoration(hintText: 'Start Time'),
-  onChanged: (value) {
-  setState(() {
-  startTime = value;
-  });
-  }),
-  TextField(
-  decoration: InputDecoration(hintText: 'End Time'),
-  onChanged: (value) {
-  setState(() {
-  endTime = value;
-  });
-  }),
-  ],
-  ),*/
-
 
   /*
   void getData() {
