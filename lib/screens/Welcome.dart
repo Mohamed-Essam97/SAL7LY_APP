@@ -71,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 50,
                   child: RaisedButton(
                     color: _color,
+                    elevation: 10.0,
                     child: Text(
                       'Sign in',
                       style: TextStyle(

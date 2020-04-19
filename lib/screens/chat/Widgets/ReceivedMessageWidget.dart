@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sal7ly_firebase/screens/chat/global/Colors.dart' as myColors;
+import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
 
 class ReceivedMessageWidget extends StatelessWidget {
   final String content;

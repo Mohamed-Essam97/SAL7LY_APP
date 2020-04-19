@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:sal7ly_firebase/screens/chat/global/Colors.dart' as myColors;
+import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
 import 'package:sal7ly_firebase/screens/chat/ChatPageView.dart';
 
 class ChatListViewItem extends StatelessWidget {

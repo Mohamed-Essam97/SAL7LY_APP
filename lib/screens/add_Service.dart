@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sal7ly_firebase/screens/chat/global/Colors.dart' as myColors;
+import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
+import 'package:pattern_formatter/pattern_formatter.dart';
+
 
 class Add_Service extends StatefulWidget {
   @override
@@ -37,135 +39,73 @@ class _Add_ServiceState extends State<Add_Service> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Add Your Service",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-          backgroundColor: myColors.red[900],
-          centerTitle: true,
+      appBar: AppBar(
+        title: Text("Add Service"),
+        backgroundColor: Colors.grey.shade50,
+      ),
+      body: Container(
+        color: Colors.grey.shade50,
+        child: Column(
+          children: <Widget>[
+            firstForm(),
+          ],
         ),
-        body: Container(
-          child: Column(
-            children: <Widget>[
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                        decoration: const InputDecoration(
-                          icon: const Icon(Icons.person),
-                          hintText: 'Enter your Service name',
-                          labelText: 'Service Name',
-                        ),
-                        onChanged: (value) {
-                        setState(() {
-                        serviceName = value;
-                        });
-                    }  // The validator receives the text that the user has entered.
-                    ),
-                    TextFormField(
-                        decoration: const InputDecoration(
-                          icon: const Icon(Icons.person),
-                          hintText: 'Enter your Service Phone Number',
-                          labelText: 'Phone Number',
-                        ),
-                        onChanged: (value) {
-                        setState(() {
-                        phoneNumber1 = value;
-                        });
-                    }  // The validator receives the text that the user has entered.
-                    ),
-                    TextFormField(
-                        decoration: const InputDecoration(
-                          icon: const Icon(Icons.person),
-                          hintText: 'Enter your Service Phone Number',
-                          labelText: 'another Phone Number',
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            phoneNumber2 = value;
-                          });
-                        }  // The validator receives the text that the user has entered.
-                    ),
-                    TextFormField(
-                        decoration: const InputDecoration(
-                          icon: const Icon(Icons.person),
-                          hintText: 'Enter Service Type',
-                          labelText: 'Service Type',
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            serviceType = value;
-                          });
-                        }  // The validator receives the text that the user has entered.
-                    ),
-                    TextFormField(
-                        decoration: const InputDecoration(
-                          icon: const Icon(Icons.person),
-                          hintText: 'Enter your Service Specialization',
-                          labelText: 'Service Specialization',
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            specialization = value;
-                          });
-                        }  // The validator receives the text that the user has entered.
-                    ),
-                    TextFormField(
-                        decoration: const InputDecoration(
-                          icon: const Icon(Icons.person),
-                          hintText: 'Enter your Service Max Price',
-                          labelText: 'Max Price',
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            maxPrice = value;
-                          });
-                        }  // The validator receives the text that the user has entered.
-                    ),
-                    TextFormField(
-                        decoration: const InputDecoration(
-                          icon: const Icon(Icons.person),
-                          hintText: 'Enter your Service Min Price',
-                          labelText: 'Min Price',
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            minPrice = value;
-                          });
-                        }  // The validator receives the text that the user has entered.
-                    ),
-                    TextFormField(
-                        decoration: const InputDecoration(
-                          icon: const Icon(Icons.person),
-                          hintText: 'Enter your Service off Days',
-                          labelText: 'offDays',
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            offDay1 = value;
-                          });
-                        }  // The validator receives the text that the user has entered.
-                    ),
-
-                    RaisedButton(
-                      child: Text('ADD DATA'),
-                      color: Colors.blue,
-                      textColor: Colors.white,
-                      elevation: 7.0,
-                      onPressed: () {
-                      addServiceData();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+      )
     );
   }
+
+
+  Widget firstForm()
+  {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0),
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+                textCapitalization: TextCapitalization.words,
+                autofocus: false,
+                decoration: InputDecoration(
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: Icon(
+                      Icons.email,
+                      color: Colors.grey,
+                    ), // icon is 48px widget.
+                  ),
+                  hintText: 'Enter your Service Name',
+                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    serviceName = value;
+                  });
+                }
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  icon: const Icon(Icons.person),
+                  hintText: 'Enter your Service Number',
+                  labelText: 'Service Number',
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    phoneNumber1 = value;
+                  });
+                }
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 
   /*
   void getData() {

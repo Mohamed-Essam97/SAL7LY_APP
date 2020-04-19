@@ -7,7 +7,7 @@ import 'package:sal7ly_firebase/screens/chat.dart';
 import 'package:sal7ly_firebase/screens/profile.dart';
 import 'package:sal7ly_firebase/screens/search.dart';
 import 'package:sal7ly_firebase/screens/WorkShops.dart';
-import 'package:sal7ly_firebase/screens/chat/global/Colors.dart' as myColors;
+import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
 
 
 class Home_Screen_Main extends StatefulWidget {

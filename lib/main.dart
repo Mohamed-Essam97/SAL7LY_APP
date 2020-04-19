@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sal7ly_firebase/Design/SplashScreen.dart';
 import 'package:sal7ly_firebase/screens/onboarding.dart';
 import 'package:sal7ly_firebase/screens/Welcome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,7 +23,7 @@ main() async {
   else
   {
 
-    screen = HomeScreen();
+    screen = Splash();
 
   }
 

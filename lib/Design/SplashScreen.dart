@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:sal7ly_firebase/firebase_login/loginpage.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:sal7ly_firebase/Design/Start.dart';
 import 'package:sal7ly_firebase/onBording/first.dart';
 
 
-class MyApp extends StatefulWidget {
+class Splash extends StatefulWidget {
 @override
-_MyAppState createState() => new _MyAppState();
+_SplashState createState() => new _SplashState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _SplashState extends State<Splash> {
 
 
   @override
   Widget build(BuildContext context) {
     return new SplashScreen(
       seconds: 4,
-      navigateAfterSeconds: new OnboardingScreen(),
+      navigateAfterSeconds: new LoginPage(),
       imageBackground: AssetImage("assets/Splash.png"),
       loaderColor: Colors.indigo,
     );
   }
+
+
+
 }
 
