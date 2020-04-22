@@ -7,6 +7,7 @@ import 'package:sal7ly_firebase/firebase_login/home.dart';
 import 'package:sal7ly_firebase/firebase_login/homepage.dart';
 import 'package:sal7ly_firebase/firebase_login/signuppage.dart';
 import 'package:sal7ly_firebase/screens/Home_Screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -18,6 +19,9 @@ class _LoginPageState extends State<LoginPage> {
 
   String _email;
   String _password;
+
+
+
 
   void validateAndSave() {
     final form = formKey.currentState;
@@ -122,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
     ));
   }
 
-  void signInWithEmailAndPassword() {
+  void signInWithEmailAndPassword() async{
     FirebaseAuth.instance
         .signInWithEmailAndPassword(email: _email, password: _password)
         .then((AuthResult auth) {
@@ -130,5 +134,10 @@ class _LoginPageState extends State<LoginPage> {
     }).catchError((e) {
       print(e);
     });
+
+    SharedPreferences prefs2 = await SharedPreferences.getInstance();
+    prefs2.setString('email', _email);
+
+
   }
 }

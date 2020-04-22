@@ -30,6 +30,19 @@ const MaterialColor red = const MaterialColor(0xFFBE1D2D, const <int, Color>{
   900: const Color(0xDDBE1D2D),
 });
 
+
+const MaterialColor green = const MaterialColor(0xDD4CAF50, const <int, Color>{
+  900: const Color(0xDD4CAF50),
+});
+
+const MaterialColor primaryText = const MaterialColor(0xDD757575, const <int, Color>{
+  900: const Color(0xDD757575),
+});
+
+
+const MaterialColor secondText = const MaterialColor(0xDD212121, const <int, Color>{
+  900: const Color(0xDD212121),
+});
 //Color orange = const Color(0xFFFF8C00);
 // Color blue = const Color(0xFF54C5E6);
 Color backGround = const Color(0xFFFbFbFb);
