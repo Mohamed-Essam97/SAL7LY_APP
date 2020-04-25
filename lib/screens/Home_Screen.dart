@@ -60,8 +60,7 @@ class _Home_Screen_MainState extends State<Home_Screen_Main> {
           child: Icon(Icons.add),
           backgroundColor: Colors.green ,
           onPressed: () {
-            Navigator.pushNamed(context, '/AddService');
-            print("Eeeeee");
+            Navigator.pushNamed(context, '/ServiceLocation');
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

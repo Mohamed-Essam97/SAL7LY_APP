@@ -36,7 +36,7 @@ class _ChatState extends State<Chat> {
           body: Container(
             child: Container(
               decoration: BoxDecoration(
-                  color: myColors.backGround,
+                  color: myColors.background,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(15.0),
                     topRight: Radius.circular(15.0),

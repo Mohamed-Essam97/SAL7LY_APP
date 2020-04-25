@@ -150,16 +150,14 @@ class _Add_ServiceState extends State<Add_Service> {
                           padding: const EdgeInsets.only(left: 1.0),
                           child: SizedBox(width: 300, child: addTextField()),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 30),
-                          child: IconButton(
-                            icon: Icon(Icons.add),
-                            color: Colors.green,
-                            iconSize: 40,
-                            onPressed: () {},
-                          ),
-                        ),
                       ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 90.0),
+                      child: SizedBox(width: 300, child: addTextField()),
                     ),
                     SizedBox(
                       height: 10,
@@ -192,17 +190,35 @@ class _Add_ServiceState extends State<Add_Service> {
                     ),
                     Row(
                       children: <Widget>[
-                        RaisedButton(
-                          child: Text(
-                            'Service Type',
-                            style: TextStyle(
-                                color: Colors.white, fontSize: 26, letterSpacing: 1),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: RaisedButton(
+                            child: Text(
+                              'Service Type',
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 26, letterSpacing: 1),
+                            ),
+                            color: myColors.red[900],
+                            textColor: Colors.white,
+                            elevation: 10.0,
+                            onPressed: () {
+                            },
                           ),
-                          color: myColors.red[900],
-                          textColor: Colors.white,
-                          elevation: 10.0,
-                          onPressed: () {
-                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: RaisedButton(
+                            child: Text(
+                              'Service Type',
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 26, letterSpacing: 1),
+                            ),
+                            color: myColors.red[900],
+                            textColor: Colors.white,
+                            elevation: 10.0,
+                            onPressed: () {
+                            },
+                          ),
                         ),
                       ],
                     ),
