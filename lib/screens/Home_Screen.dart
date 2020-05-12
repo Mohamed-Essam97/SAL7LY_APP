@@ -8,6 +8,7 @@ import 'package:sal7ly_firebase/screens/profile.dart';
 import 'package:sal7ly_firebase/screens/search.dart';
 import 'package:sal7ly_firebase/screens/WorkShops.dart';
 import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class Home_Screen_Main extends StatefulWidget {
@@ -36,19 +37,28 @@ class _Home_Screen_MainState extends State<Home_Screen_Main> {
 
 
 
-
+  LogOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('email');
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        '/Login', (Route<dynamic> route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return Scaffold(
       appBar: AppBar(
         title: Text("SAL7LY",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
         backgroundColor:myColors.red[900] ,
         centerTitle: true,
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            color: Colors.white,
+            onPressed: () {
+              LogOut();
+            },
+          )
           ],
       ),
       drawer: NavigationDrawer(),
@@ -59,8 +69,11 @@ class _Home_Screen_MainState extends State<Home_Screen_Main> {
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           backgroundColor: Colors.green ,
-          onPressed: () {
+          onPressed: () async {
             Navigator.pushNamed(context, '/ServiceLocation');
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            String stringValue = prefs.getString('email');
+            print(stringValue);
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

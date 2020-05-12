@@ -2,8 +2,10 @@ import'package:flutter/material.dart';
 import 'package:sal7ly_firebase/firebase_login/loginpage.dart';
 import 'package:sal7ly_firebase/firebase_login/signuppage.dart';
 import 'package:sal7ly_firebase/screens/Home_Screen.dart';
+import 'package:sal7ly_firebase/screens/LogOut.dart';
 import 'package:sal7ly_firebase/screens/add_Service.dart';
 import 'package:sal7ly_firebase/screens/add_Service_Location.dart';
+import 'package:sal7ly_firebase/screens/final_ServiceDetails.dart';
 import 'package:sal7ly_firebase/screens/map.dart';
 import 'package:sal7ly_firebase/screens/serviceDetails.dart';
 
@@ -18,5 +20,7 @@ import 'package:sal7ly_firebase/screens/serviceDetails.dart';
       '/ServiceLocation':(context) => AddServiceLocation(),
       '/Map':(context) => MyMap(),
       '/ServiceDetails':(context) => ServiceDetails(),
+      '/FinalDetails':(context) => FinalDetails(),
+      '/LogOut':(context) => LogOut(),
 
   };

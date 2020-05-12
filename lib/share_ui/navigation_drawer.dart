@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sal7ly_firebase/models/nav_menu.dart';
 import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class NavigationDrawer extends StatefulWidget {
@@ -11,6 +12,9 @@ class NavigationDrawer extends StatefulWidget {
 class _NavigationDrawerState extends State<NavigationDrawer> {
 
 
+
+
+
   List<NavMenuItem> navigationMenu =
   [
 
@@ -18,6 +22,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     NavMenuItem("Gad3ana", () => (){}),
     NavMenuItem("Settings", () => (){}),
     NavMenuItem("About App", () => (){}),
+    NavMenuItem("Log out", () => (){}),
   ];
 
   List<Icon> icons =
@@ -26,6 +31,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     Icon(Icons.time_to_leave,color:myColors.red[900] ),
     Icon(Icons.settings,color:myColors.red[900] ,),
     Icon(Icons.accessibility,color:myColors.red[900] ),
+    Icon(Icons.exit_to_app,color:myColors.red[900] ),
   ];
 
 

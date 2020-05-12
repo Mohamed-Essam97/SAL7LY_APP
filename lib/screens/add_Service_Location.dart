@@ -16,7 +16,10 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-    print(position);
+    print(position.latitude);
+    print(position.longitude);
+
+
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     print(user.uid);
     final databaseReference = Firestore.instance;
@@ -24,11 +27,11 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
         .collection("service")
         .document("${user.uid}")
         .setData({
-      'location': position.toString(),
+      'location' : new GeoPoint(position.latitude, position.longitude),
       'service_owner':"/service_owner/${user.uid}",
     });
 
- /*   FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    /*   FirebaseUser user = await FirebaseAuth.instance.currentUser();
     final databaseReference = Firestore.instance;
     await databaseReference
         .collection("service")
@@ -36,7 +39,8 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
         .setData({
       'location': position,
     });
- */ }
+ */
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +51,28 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(top: 50, bottom: 0),
-              child: Text(
-                "Service Location",
-                style: TextStyle(
-                  fontFamily: 'Bold',
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Row(
+                children: <Widget>[
+                  Transform.translate(
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back_ios),
+                      color: Colors.black,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    offset: Offset(10,0),
+                  ),
+                  SizedBox(width: 38,),
+                  Text(
+                    "Service Location",
+                    style: TextStyle(
+                      fontFamily: 'Bold',
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(

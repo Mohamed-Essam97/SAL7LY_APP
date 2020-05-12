@@ -16,7 +16,7 @@ class MyMapSampleState extends State<MyMap> {
         child: Stack(
           children: <Widget>[
             GoogleMap(
-              mapType: MapType.satellite,
+              mapType: MapType.normal,
               initialCameraPosition: CameraPosition(
                 target: LatLng(30.1476397, 31.2822992),
                 zoom: 11,
@@ -58,7 +58,7 @@ class MyMapSampleState extends State<MyMap> {
                       height: 40.0,
                       child: GestureDetector(
                         onTap: () {
-                          print("object");
+                          Navigator.pop(context);
                         },
                         child: Container(
                           decoration: BoxDecoration(

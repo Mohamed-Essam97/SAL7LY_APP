@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sal7ly_firebase/firebase_login/loginpage.dart';
-import 'package:sal7ly_firebase/firebase_login/signuppage.dart';
 
-import 'Home_Screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

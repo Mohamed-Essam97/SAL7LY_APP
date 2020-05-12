@@ -17,7 +17,6 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     "قطع غيار",
     "توكيل",
     "مركز صيانه شامل",
-    "شئ اخر"
   ];
 
   List<String> spicalizationList = [
@@ -29,20 +28,25 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     "عفشه",
     "سروجى",
     "اكسسورات",
-    "شئ اخر",
   ];
+
+  var details = {
+    'ميكانيكى':'2nt2A9EHhiSpJdbQs0iV',
+    'اكسسورات':'5luZPfYsfXmFGH7gjuW8',
+    'مغسله':'FHuKkzMmk4HjdqZpVpoc',
+    'ونش':'GO0slfGMB76xLGeuDxNk',
+  };
+
 
   //List<String> selectedChoices = List();
   List<String> selectedServiceTypeList = List();
   List<String> selectedSpicalizationList = List();
 
-  var phone1="";
-  var phone2="";
+  var phone1 ;
+  var phone2 ;
   List<String> phones = List();
   String serviceName;
-  saveNameAndPhoneNumber()
-  async {
-
+  saveNameAndPhoneNumber() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     print(user.uid);
     final databaseReference = Firestore.instance;
@@ -51,11 +55,10 @@ class _ServiceDetailsState extends State<ServiceDetails> {
         .document("${user.uid}")
         .updateData({
       'name': serviceName,
-      'phone':phones,
+      'phone': phones,
     });
-
-
   }
+
 
 
 
@@ -68,15 +71,28 @@ class _ServiceDetailsState extends State<ServiceDetails> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(top: 30, bottom: 0),
-              child: Center(
-                child: Text(
-                  "Service Details",
-                  style: TextStyle(
-                    fontFamily: 'Bold',
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+              child: Row(
+                children: <Widget>[
+                  Transform.translate(
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back_ios),
+                      color: Colors.black,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    offset: Offset(10,0),
                   ),
-                ),
+                  SizedBox(width: 38,),
+                  Text(
+                    "Service Details",
+                    style: TextStyle(
+                      fontFamily: 'Bold',
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -95,23 +111,21 @@ class _ServiceDetailsState extends State<ServiceDetails> {
             Padding(
               padding: const EdgeInsets.fromLTRB(15, 1, 15, 15),
               child: TextFormField(
-                keyboardType:TextInputType.numberWithOptions(),
+                keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(
                   hintText: 'Service Phone Number',
                 ),
                 onChanged: (value) {
-                  setState(() {
                     phone1 = value;
                     phones.add(phone1);
-                  });
-                },
+                    },
               ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(15, 1, 15, 15),
               child: TextFormField(
                 autofocus: false,
-                keyboardType:TextInputType.numberWithOptions(),
+                keyboardType: TextInputType.numberWithOptions(),
                 decoration: InputDecoration(
                   hintText: 'Another Phone Number',
                 ),
@@ -173,26 +187,31 @@ class _ServiceDetailsState extends State<ServiceDetails> {
             ),*/
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: FlatButton(
-                shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(10.0),
-                ),
-                color: myColors.green,
-                child: Text(
-                  'Save',
-                  style: TextStyle(
-                    fontFamily: 'SemiBold',
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1,
+              child: SizedBox(
+                height: 45,
+                width: double.infinity,
+                child: FlatButton(
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(10.0),
                   ),
+                  color: myColors.green,
+                  child: Text(
+                    'Save',
+                    style: TextStyle(
+                      fontFamily: 'SemiBold',
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  onPressed: () {
+                    saveNameAndPhoneNumber();
+                    Navigator.pushNamed(context, '/FinalDetails',arguments: {serviceName,phones});
+                    print(selectedSpicalizationList);
+                    print(selectedServiceTypeList);
+                  },
                 ),
-                onPressed: () {
-                  saveNameAndPhoneNumber();
-                  print(selectedSpicalizationList);
-                  print(selectedServiceTypeList);
-                },
               ),
             ),
           ],
@@ -201,30 +220,6 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     );
   }
 
-  /* _showReportDialog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          //Here we will build the content of the dialog
-          return AlertDialog(
-            title: Text("Report Video"),
-            content: MultiSelectChip(
-              serviceTypeList,
-              onSelectionChanged: (selectedList) {
-                setState(() {
-                  selectedReportList = selectedList;
-                });
-              },
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Report"),
-                onPressed: () => Navigator.of(context).pop(),
-              )
-            ],
-          );
-        });
-  }*/
 }
 
 class MultiSelectChip extends StatefulWidget {

@@ -20,9 +20,6 @@ class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
 
-
-
-
   void validateAndSave() {
     final form = formKey.currentState;
     if (form.validate()) {
@@ -43,6 +40,17 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Transform.translate(
+                  child: Text(
+                    "Sign In To SAL7LY",
+                    style: TextStyle(
+                      fontFamily: 'Bold',
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  offset: Offset(-35, -80),
+                ),
                 TextFormField(
                     textCapitalization: TextCapitalization.words,
                     autofocus: false,
@@ -56,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       hintText: 'Enter your Email',
                       contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0)),
                     ),
@@ -93,32 +101,49 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   width: double.infinity,
                   height: 50,
-                  child: RaisedButton(
+                  child: FlatButton(
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(10.0),
+                    ),
                     child: Text(
                       'Sign in',
                       style: TextStyle(
-                          color: Colors.white, fontSize: 26, letterSpacing: 1),
+                        fontFamily: 'SemiBold',
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1,
+                      ),
                     ),
                     color: myColors.red[900],
                     textColor: Colors.white,
-                    elevation: 10.0,
-
                     onPressed: () {
                       signInWithEmailAndPassword();
                     },
                   ),
                 ),
                 SizedBox(height: 15.0),
-                Text('Don\'t have an account?'),
-                SizedBox(height: 10.0),
-                RaisedButton(
-                  child: Text('Sign Up'),
-                  color: myColors.red[900],
-                  textColor: Colors.white,
-                  elevation: 10.0,
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/Signup');
-                  },
+                Padding(
+                  padding: const EdgeInsets.only(left: 50.0, right: 50),
+                  child: Center(
+                    child: Row(
+                      children: <Widget>[
+                        Text('Don\'t have an account? '),
+                        InkWell(
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                                color: myColors.red,
+                                fontFamily: "Bold",
+                                fontSize: 18),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pushNamed('/Signup');
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -126,18 +151,15 @@ class _LoginPageState extends State<LoginPage> {
     ));
   }
 
-  void signInWithEmailAndPassword() async{
+  void signInWithEmailAndPassword() async {
     FirebaseAuth.instance
         .signInWithEmailAndPassword(email: _email, password: _password)
         .then((AuthResult auth) {
-      Navigator.pushNamed(context, '/Home');
-    }).catchError((e) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          '/Home', (Route<dynamic> route) => false);    }).catchError((e) {
       print(e);
     });
-
-    SharedPreferences prefs2 = await SharedPreferences.getInstance();
-    prefs2.setString('email', _email);
-
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('email', _email);
   }
 }
