@@ -18,7 +18,8 @@ class _SplashState extends State<Splash> {
     var email = prefs.getString('email');
     if (email == null) {
       print(email);
-      Navigator.of(context).pushNamed('/Login');
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          '/Login', (Route<dynamic> route) => false);
     } else if (email != null) {
       Firestore.instance
           .collection('service_owner')
@@ -30,10 +31,12 @@ class _SplashState extends State<Splash> {
                 print(email);
                 //bool x =false;
                 if (data.documents.length == 1) {
-                  Navigator.of(context).pushNamed('/Home');
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/Home', (Route<dynamic> route) => false);
                   print(data.documents.length);
                 } else if(doc["email"] != email ){
-                  Navigator.of(context).pushNamed('/Login');
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/Login', (Route<dynamic> route) => false);
                 }
               }));
     }

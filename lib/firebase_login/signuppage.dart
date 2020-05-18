@@ -159,6 +159,7 @@ class _SignupPageState extends State<SignupPage> {
           .setData({
         'email': _email,
         'password': _password,
+        'uid':user.uid,
       });
       Navigator.of(context).pushNamedAndRemoveUntil(
           '/Home', (Route<dynamic> route) => false);
