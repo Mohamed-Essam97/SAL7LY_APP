@@ -16,6 +16,8 @@ class Business_owner_Register extends StatefulWidget {
 }
 
 class _Business_owner_Register extends State<Business_owner_Register> {
+
+
   File imageFile;
   String _uploadedFileURL;
 

@@ -9,239 +9,222 @@ import 'package:sal7ly_firebase/firebase_login/signuppage.dart';
 import 'package:sal7ly_firebase/screens/Home_Screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _phoneNumber = TextEditingController();
+
+
   final formKey = new GlobalKey<FormState>();
 
-  String _email;
-  String _password;
-  void validateAndSave() {
-    final form = formKey.currentState;
-    if (form.validate()) {
-      form.save();
-    } else {
-      print("Formis invalid");
-    }
+  bool _autovalidation = false;
+  bool _isLoading = false;
+  String _error ;
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
-  String phoneNum;
-  String smsCode;
-  String verificationId;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  Future<void> verifyPhone() async {
-    final PhoneCodeAutoRetrievalTimeout autoRetrievalTimeout = (String verId) {
-      this.verificationId = verId;
-    };
-    final PhoneCodeSent smsCodeSent = (String verId, [int forceCodeRecend]) {
-      this.verificationId = verId;
-      smsCodeDialog(context).then((value) {
-        print("signed in");
+  bool isValid = false;
+
+  Future<Null> validate(StateSetter updateState) async {
+    print("in validate : ${_phoneNumber.text.length}");
+    if (_phoneNumber.text.length == 10) {
+      updateState(() {
+        isValid = true;
       });
-    };
-    final PhoneVerificationCompleted verificationSuccess =
-        (AuthCredential credential) {
-      print("verified");
-    };
-    final PhoneVerificationFailed verificationFailed =
-        (AuthException exception) {
-      print("${exception.message}");
-    };
-    await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: this.phoneNum,
-        timeout: const Duration(seconds: 5),
-        verificationCompleted: verificationSuccess,
-        verificationFailed: verificationFailed,
-        codeSent: smsCodeSent,
-        codeAutoRetrievalTimeout: autoRetrievalTimeout);
-  }
-
-  Future<bool> smsCodeDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return new AlertDialog(
-            title: Text("enter sms code "),
-            content: TextField(
-              onChanged: (value) {
-                this.smsCode = value;
-              },
-            ),
-            contentPadding: EdgeInsets.all(10.0),
-            actions: <Widget>[
-              new FlatButton(
-                  onPressed: () {
-                    FirebaseAuth.instance.currentUser().then((user) {
-                      if (user != null) {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pushNamed("/categories");
-                      } else {
-                        Navigator.of(context).pop();
-                        signIn();
-                      }
-                    });
-                  },
-                  child: Text("Done"))
-            ],
-          );
-        });
-  }
-
-  signIn() async {
-    AuthCredential credential = PhoneAuthProvider.getCredential(
-        verificationId: verificationId, smsCode: smsCode);
-    await FirebaseAuth.instance.signInWithCredential(credential).then((user) {
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil('/Home', (Route<dynamic> route) => false);
-    }).catchError((onError) {
-      print(onError);
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        body: Center(
-      child: Container(
-        padding: EdgeInsets.all(25.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Transform.translate(
-                child: Text(
-                  "Sign In To SAL7LY",
-                  style: TextStyle(
-                    fontFamily: 'Bold',
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                offset: Offset(-35, -80),
-              ),
-              TextFormField(
-                  textCapitalization: TextCapitalization.words,
-                  autofocus: false,
-                  decoration: InputDecoration(
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.only(left: 5.0),
-                      child: Icon(
-                        Icons.email,
-                        color: Colors.grey,
-                      ), // icon is 48px widget.
-                    ),
-                    hintText: 'Enter your Email',
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0)),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _email = value;
-                    });
-                  }),
-              SizedBox(height: 15.0),
-              TextFormField(
-                textCapitalization: TextCapitalization.words,
-                autofocus: false,
-                decoration: InputDecoration(
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.only(left: 5.0),
-                    child: Icon(
-                      Icons.lock,
-                      color: Colors.grey,
-                    ), // icon is 48px widget.
-                  ),
-                  hintText: 'Enter your Service Name',
-                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0)),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _password = value;
-                  });
-                },
-                obscureText: true,
-              ),
-              SizedBox(height: 20.0),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: FlatButton(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(10.0),
-                  ),
-                  child: Text(
-                    'Sign in',
-                    style: TextStyle(
-                      fontFamily: 'SemiBold',
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                  color: myColors.red[900],
-                  textColor: Colors.white,
-                  onPressed: () {
-                    signInWithEmailAndPassword();
-                  },
-                ),
-              ),
-              SizedBox(height: 15.0),
-              Padding(
-                padding: const EdgeInsets.only(left: 50.0, right: 50),
-                child: Center(
-                  child: Row(
-                    children: <Widget>[
-                      Text('Don\'t have an account? '),
-                      InkWell(
-                        child: Text(
-                          'Sign Up',
-                          style: TextStyle(
-                              color: myColors.red,
-                              fontFamily: "Bold",
-                              fontSize: 18),
-                        ),
-                        onTap: () {
-                          Navigator.of(context).pushNamed('/Signup');
-                        },
+        body: Container(
+          padding: EdgeInsets.all(25.0),
+          child: Form(
+            key: formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 90,top: 80,bottom: 80),
+                    child: Text(
+                      "Sign In To SAL7LY",
+                      style: TextStyle(
+                        fontFamily: 'Bold',
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
+                  ),
+                  TextFormField(
+                      textCapitalization: TextCapitalization.words,
+                      autofocus: false,
+                      controller: _emailController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Email is required';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.only(left: 5.0),
+                          child: Icon(
+                            Icons.email,
+                            color: Colors.grey,
+                          ), // icon is 48px widget.
+                        ),
+                        hintText: 'Enter your Email',
+                        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15.0)),
+                      ),
+                      ),
+                  SizedBox(height: 15.0),
+                  TextFormField(
+                    textCapitalization: TextCapitalization.words,
+                    autofocus: false,
+                    controller: _passwordController,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Password is required';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.only(left: 5.0),
+                        child: Icon(
+                          Icons.lock,
+                          color: Colors.grey,
+                        ), // icon is 48px widget.
+                      ),
+                      hintText: 'Enter your password',
+                      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0)),
+                    ),
+                    obscureText: true,
+                  ),
+                  SizedBox(height: 20.0),
+                  Row(
+                    children: <Widget>[
+                      Container(color: myColors.secondText,height: 0.5,width: 110,),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('With Phone number'),
+                    ),
+                      Container(color: myColors.secondText,height: 0.5,width: 110,),
                     ],
                   ),
-                ),
+                  SizedBox(height: 15.0),
+                  TextFormField(
+                    textCapitalization: TextCapitalization.words,
+                    keyboardType: TextInputType.phone,
+                    autofocus: false,
+                    controller: _phoneNumber,
+                    decoration: InputDecoration(
+                      prefix: Container(
+                        padding: EdgeInsets.all(4.0),
+                        child: Text(
+                          "+20",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.only(left: 5.0),
+                        child: Icon(
+                          Icons.phone,
+                          color: Colors.grey,
+                        ), // icon is 48px widget.
+                      ),
+                      hintText: 'Enter your Phone Number',
+                      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0)),
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: FlatButton(
+                      shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(10.0),
+                      ),
+                      child: Text(
+                        'Sign in',
+                        style: TextStyle(
+                          fontFamily: 'SemiBold',
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      color: myColors.red[900],
+                      textColor: Colors.white,
+                      onPressed: () async {
+                        signInWithEmailAndPassword();
+                        },
+                    ),
+                  ),
+                  SizedBox(height: 15.0),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 50.0, right: 50),
+                    child: Center(
+                      child: Row(
+                        children: <Widget>[
+                          Text('Don\'t have an account? '),
+                          InkWell(
+                            child: Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                  color: myColors.red,
+                                  fontFamily: "Bold",
+                                  fontSize: 18),
+                            ),
+                            onTap: () {
+                              Navigator.of(context).pushNamed('/Signup');
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              /*TextField(
-                decoration:
-                    InputDecoration(hintText: "enter your phone number"),
-                onChanged: (value) {
-                  this.phoneNum = value;
-                },
-              ),
-              SizedBox(height: 10.0),
-              RaisedButton(
-                onPressed: verifyPhone,
-                child: Text("verify"),
-                textColor: Colors.white,
-                elevation: 7.0,
-                color: Colors.blueAccent,
-              ),*/
-            ],
+            ),
           ),
-        ),
-      ),
-    ));
+        ));
   }
 
   void signInWithEmailAndPassword() async {
+
+    if ( ! formKey.currentState.validate()) {
+      setState(() {
+        _autovalidation = true;
+      });
+    } else {
+      setState(() {
+        _isLoading = true;
+        _autovalidation = false;
+      });
     FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: _email, password: _password)
+        .signInWithEmailAndPassword(email: _emailController.text, password: _passwordController.text)
         .then((AuthResult auth) {
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/Home', (Route<dynamic> route) => false);
@@ -249,6 +232,7 @@ class _LoginPageState extends State<LoginPage> {
       print(e);
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('email', _email);
+    prefs.setString('email', _emailController.text);
   }
+}
 }

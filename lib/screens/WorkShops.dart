@@ -1,23 +1,42 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sal7ly_firebase/screens/chat/Widgets/Loading.dart';
+import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
 
 class Work_Shops extends StatefulWidget {
   @override
   _Work_ShopsState createState() => _Work_ShopsState();
 }
 
-class _Work_ShopsState extends State<Work_Shops> {
+Map<String, String> collections = {'service': 'service'};
 
+class _Work_ShopsState extends State<Work_Shops> {
   bool isLoading = true;
 
+  FirebaseUser _user;
+  String _errorMessage;
+  bool _hasError = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         isLoading = false;
+      });
+    });
+    FirebaseAuth.instance.currentUser().then((user) {
+      setState(() {
+        _user = user;
+        _hasError = false;
+        _isLoading = false;
+      });
+    }).catchError((error) {
+      setState(() {
+        _hasError = true;
+        _errorMessage = error.toString();
       });
     });
   }
@@ -29,30 +48,264 @@ class _Work_ShopsState extends State<Work_Shops> {
     } else {
       return Container(
         child: Scaffold(
-          body: ListView.builder(
-            padding: EdgeInsets.all(8),
-            itemBuilder: (context, position) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Card(
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: <Widget>[
-                     _drawBody(),
-                     _drawTitle(),
-                     _drawHeader(),
-                   ],
-                 ),
-
-                ),
-              );
-            },
-            itemCount: 20,
-          ),
+          body: _conTent(context),
         ),
       );
     }
   }
+
+  Widget _conTent(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: StreamBuilder(
+        stream: Firestore.instance.collection('service').snapshots(),
+        // ignore: missing_return
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom:50.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        "Don't have a Worshops",
+                        style: TextStyle(
+                          fontFamily: 'Bold',
+                          fontSize: 30,
+                          color: myColors.secondText,
+                        ),
+                      ),
+                      Text(
+                        "ADD",
+                        style: TextStyle(
+                          fontFamily: 'Bold',
+                          fontSize: 30,
+                          color: myColors.secondText,
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_downward,
+                        color: myColors.green,
+                        size: 50.0,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+              break;
+            case ConnectionState.waiting:
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom:50.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        "Don't have a Worshops",
+                        style: TextStyle(
+                          fontFamily: 'Bold',
+                          fontSize: 30,
+                          color: myColors.secondText,
+                        ),
+                      ),
+                      Text(
+                        "ADD",
+                        style: TextStyle(
+                          fontFamily: 'Bold',
+                          fontSize: 30,
+                          color: myColors.secondText,
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_downward,
+                        color: myColors.green,
+                        size: 50.0,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+              break;
+            case ConnectionState.active:
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                print("Error");
+              }
+              if (!snapshot.hasData) {
+                print("No Error");
+              }
+              return drawScreen(context);
+              break;
+          }
+        },
+      ),
+    );
+  }
+
+  Widget drawScreen(BuildContext context) {
+    return new StreamBuilder(
+      stream: Firestore.instance
+          .collection('service')
+          .where("owner_id", isEqualTo: _user.uid)
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) {
+          return new Text("Loading...");
+        }
+        return new ListView(
+          children: snapshot.data.documents.map((document) {
+            return GestureDetector(
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                margin: EdgeInsets.only(bottom: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      child: Image(
+                        image: NetworkImage(document['image'].toString()),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Row(children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 8, left: 16, right: 16, top: 16),
+                        child: Text(
+                          document['name'],
+                          style: TextStyle(
+                              color: Colors.grey.shade900,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 50,
+                      ),
+                    ]),
+                    Row(
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                document['phone'][0].toString(),
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Transform.translate(
+                          offset: Offset(70, -3),
+                          child: Container(
+                            height: 30.0,
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: myColors.red,
+                                    style: BorderStyle.solid,
+                                    width: 1.0,
+                                  ),
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      "  View  ",
+                                      style: TextStyle(
+                                        color: myColors.red,
+                                        fontFamily: 'SemiBold',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 1,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  Widget _drawScreen(BuildContext context, QuerySnapshot data) {
+    return ListView.builder(
+      padding: EdgeInsets.all(8),
+      itemCount: data.documents.length,
+      itemBuilder: (context, position) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Card(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+/*
+                SizedBox(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  child: Image(
+                    image: NetworkImage(data.documents[position]['image']),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+*/
+                Padding(
+                  padding: const EdgeInsets.only(
+                      bottom: 8, left: 16, right: 16, top: 16),
+                  child: Text(
+                    data.documents[position]['name'],
+                    style: TextStyle(
+                        color: Colors.grey.shade900,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            data.documents[position]['phone'].toString(),
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _drawHeader() {
     return Row(
       children: <Widget>[
@@ -95,7 +348,10 @@ class _Work_ShopsState extends State<Work_Shops> {
       padding: const EdgeInsets.only(bottom: 8, left: 16, right: 16, top: 16),
       child: Text(
         'Al-Amana WorkShop ',
-        style: TextStyle(color: Colors.grey.shade900,fontWeight: FontWeight.bold,fontSize: 15),
+        style: TextStyle(
+            color: Colors.grey.shade900,
+            fontWeight: FontWeight.bold,
+            fontSize: 15),
       ),
     );
   }

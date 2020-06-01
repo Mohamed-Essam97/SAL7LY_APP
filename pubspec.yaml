@@ -35,6 +35,9 @@ dependencies:
   cupertino_icons: ^0.1.2
   pattern_formatter: ^1.0.1
   flutter_svg: ^0.17.4
+  international_phone_input: ^1.0.4
+  intl_phone_number_input: ^0.4.2
+
 
 dev_dependencies:
   flutter_test:

@@ -54,16 +54,10 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     return new Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              "assets/Splash.png",
-            ),
-          ),
-        ),
+        color: myColors.red,
         child: Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(myColors.red),
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
           ),
         ),
       ),
