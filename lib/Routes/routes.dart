@@ -10,12 +10,12 @@ import 'package:sal7ly_firebase/screens/final_ServiceDetails.dart';
 import 'package:sal7ly_firebase/screens/map.dart';
 import 'package:sal7ly_firebase/screens/name.dart';
 import 'package:sal7ly_firebase/screens/serviceDetails.dart';
+import 'package:sal7ly_firebase/screens/serviceProfile.dart';
 import 'package:sal7ly_firebase/screens/updatePhone.dart';
 
   Map< String , WidgetBuilder> routes =
 
   {
-
       '/Home':(context) => Home_Screen_Main(),
       '/AddService':(context) => Add_Service(),
       '/Signup':(context) => SignupPage(),
@@ -23,10 +23,12 @@ import 'package:sal7ly_firebase/screens/updatePhone.dart';
       '/ServiceLocation':(context) => AddServiceLocation(),
       '/Map':(context) => MyMap(),
       '/ServiceDetails':(context) => ServiceDetails(),
+      '/ServiceProfile':(context) => ServiceProfile(),
       '/FinalDetails':(context) => FinalDetails(),
       '/LogOut':(context) => LogOut(),
       '/EditProfile':(context) => EditProfile(),
       '/EditName':(context) => EditName(),
       '/EditPhone':(context) => EditPhone(),
+
 
   };

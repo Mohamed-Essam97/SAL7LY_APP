@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:sal7ly_firebase/screens/chat/Widgets/Loading.dart';
 import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
+import 'package:sal7ly_firebase/screens/serviceProfile.dart';
 
 class Work_Shops extends StatefulWidget {
   @override
@@ -63,71 +65,7 @@ class _Work_ShopsState extends State<Work_Shops> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom:50.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        "Don't have a Worshops",
-                        style: TextStyle(
-                          fontFamily: 'Bold',
-                          fontSize: 30,
-                          color: myColors.secondText,
-                        ),
-                      ),
-                      Text(
-                        "ADD",
-                        style: TextStyle(
-                          fontFamily: 'Bold',
-                          fontSize: 30,
-                          color: myColors.secondText,
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_downward,
-                        color: myColors.green,
-                        size: 50.0,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-              break;
             case ConnectionState.waiting:
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom:50.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        "Don't have a Worshops",
-                        style: TextStyle(
-                          fontFamily: 'Bold',
-                          fontSize: 30,
-                          color: myColors.secondText,
-                        ),
-                      ),
-                      Text(
-                        "ADD",
-                        style: TextStyle(
-                          fontFamily: 'Bold',
-                          fontSize: 30,
-                          color: myColors.secondText,
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_downward,
-                        color: myColors.green,
-                        size: 50.0,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-              break;
             case ConnectionState.active:
             case ConnectionState.done:
               if (snapshot.hasError) {
@@ -144,6 +82,8 @@ class _Work_ShopsState extends State<Work_Shops> {
     );
   }
 
+  String serviceName;
+  String serviceID ;
   Widget drawScreen(BuildContext context) {
     return new StreamBuilder(
       stream: Firestore.instance
@@ -152,11 +92,18 @@ class _Work_ShopsState extends State<Work_Shops> {
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
-          return new Text("Loading...");
+          return Loading();
         }
         return new ListView(
           children: snapshot.data.documents.map((document) {
             return GestureDetector(
+              onTap: () {
+                serviceID = document['service_id'].toString();
+                serviceName = document['name'].toString();
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context)=>ServiceProfile(serviceID:serviceID,serviceName:serviceName),
+                ));
+              },
               child: Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
@@ -173,72 +120,44 @@ class _Work_ShopsState extends State<Work_Shops> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    Row(children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 8, left: 16, right: 16, top: 16),
-                        child: Text(
-                          document['name'],
-                          style: TextStyle(
-                              color: Colors.grey.shade900,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: RatingBarIndicator(
+                            rating: document["rating"],
+                            unratedColor: Colors.grey.shade300,
+                            itemBuilder: (context, index) => Icon(
+                              Icons.star,
+                              color: myColors.green,
+                            ),
+                            itemCount: 5,
+                            itemSize: 30.0,
+                            direction: Axis.horizontal,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 50,
-                      ),
-                    ]),
-                    Row(
-                      children: <Widget>[
+                        SizedBox(
+                          width: 50,
+                        ),
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Text(
-                                document['phone'][0].toString(),
-                                style: TextStyle(color: Colors.grey),
-                              ),
+                            Text(
+                              document['name'],
+                              style: TextStyle(
+                                  color: Colors.grey.shade900,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15),
+                            ),
+                            Text(
+                              document['phone'][0].toString(),
+                              style: TextStyle(color: Colors.grey),
                             ),
                           ],
                         ),
-                        Transform.translate(
-                          offset: Offset(70, -3),
-                          child: Container(
-                            height: 30.0,
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: myColors.red,
-                                    style: BorderStyle.solid,
-                                    width: 1.0,
-                                  ),
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      "  View  ",
-                                      style: TextStyle(
-                                        color: myColors.red,
-                                        fontFamily: 'SemiBold',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 1,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
                       ],
+                      ),
                     ),
                   ],
                 ),

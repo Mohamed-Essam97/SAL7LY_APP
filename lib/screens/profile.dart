@@ -6,14 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
-import 'dart:io';
-import 'package:path/path.dart' as Path;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:sal7ly_firebase/screens/chat/Widgets/Loading.dart';
-import 'package:sal7ly_firebase/screens/updatePhone.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -419,12 +412,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             height: 50.0,
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditPhone(),
-                  ),
-                );
+                Navigator.pushNamed(context, '/EditPhone');
               },
               child: Container(
                 child: Padding(
@@ -445,12 +433,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                       IconButton(
                           icon: Icon(Icons.chevron_right),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditPhone(),
-                              ),
-                            );
+                            Navigator.pushNamed(context, '/EditPhone');
+
                           }),
                     ],
                   ),
@@ -470,7 +454,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             height: 50.0,
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).pushNamed('/EditPhone');
               },
               child: Container(
                 child: Padding(
@@ -488,11 +471,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           returnEmail(15, 'Bold'),
                         ],
                       ),
-                      IconButton(
-                          icon: Icon(Icons.chevron_right),
-                          onPressed: () {
-                            Navigator.of(context).pushNamed('/EditPhone');
-                          }),
                     ],
                   ),
                 ),

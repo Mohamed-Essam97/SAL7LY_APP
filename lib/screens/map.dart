@@ -24,7 +24,6 @@ class MyMapSampleState extends State<MyMap> {
   @override
   Widget build(BuildContext context) {
     searchandNavigate() {
-
       if(searchAddr.length>=1){
         Geolocator().placemarkFromAddress(searchAddr).then((result) {
           mapController.animateCamera(CameraUpdate.newCameraPosition(
