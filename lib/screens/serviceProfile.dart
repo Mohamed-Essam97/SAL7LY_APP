@@ -19,8 +19,7 @@ class ServiceProfile extends StatefulWidget {
   ServiceProfile({this.serviceID, this.serviceName});
 
   @override
-  _ServiceProfileState createState() =>
-      _ServiceProfileState(serviceID, serviceName);
+  _ServiceProfileState createState() => _ServiceProfileState(serviceID, serviceName);
 }
 
 class _ServiceProfileState extends State<ServiceProfile> {
@@ -32,12 +31,25 @@ class _ServiceProfileState extends State<ServiceProfile> {
   String _uploadedFileURL;
   bool _isActive = true;
 
+  TextEditingController _descriptionController = TextEditingController();
+
+  final formKey = new GlobalKey<FormState>();
+
+
   Future uploadServiceImage() async {
-    print(serviceID);
-    Firestore.instance
-        .collection('service')
-        .document(serviceID)
-        .updateData({'image': _uploadedFileURL});
+    if(!_uploadedFileURL.isEmpty)
+    {
+      print(serviceID);
+      Firestore.instance
+          .collection('service')
+          .document(serviceID)
+          .updateData({'image': _uploadedFileURL});
+
+    }else
+      {
+        print('Error');
+      }
+
   }
 
   Future uploadFile() async {
@@ -48,18 +60,18 @@ class _ServiceProfileState extends State<ServiceProfile> {
     await uploadTask.onComplete;
     print('File Uploaded');
     storageReference.getDownloadURL().then((fileURL) {
-      setState(() {
         _uploadedFileURL = fileURL;
         print(_uploadedFileURL);
-      });
     });
   }
+
 
   _openGallary(BuildContext context) async {
     var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
     this.setState(() {
       imageFile = picture;
     });
+    uploadFile();
     Navigator.of(context).pop();
     _showImageDialoge(context);
   }
@@ -69,6 +81,7 @@ class _ServiceProfileState extends State<ServiceProfile> {
     this.setState(() {
       imageFile = picture;
     });
+    uploadFile();
     Navigator.of(context).pop();
     _showImageDialoge(context);
   }
@@ -123,7 +136,6 @@ class _ServiceProfileState extends State<ServiceProfile> {
                           style: TextStyle(fontSize: 20, color: myColors.green),
                         ),
                         onTap: () {
-                          uploadFile();
                           uploadServiceImage();
                           Navigator.of(context).pop();
                         },
@@ -137,6 +149,84 @@ class _ServiceProfileState extends State<ServiceProfile> {
           );
         });
   }
+
+
+  void addDescription() {
+    if (!formKey.currentState.validate()) {
+      print('Error');
+    } else {
+      Firestore.instance.collection('service')
+          .document(serviceID)
+          .updateData({
+        'description': _descriptionController.text,
+      });
+      _descriptionController.clear();
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _showDescriptionDialoge(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Enter The Service Description"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Form(
+                        key: formKey,
+                        child: new TextFormField(
+                          controller: _descriptionController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please Write description';
+                            }
+                            return null;
+                          },
+                          decoration: const InputDecoration(hintText: "Description"),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          GestureDetector(
+                            child: Text(
+                              "Save",
+                              style: TextStyle(fontSize: 20, color: myColors.green),
+                            ),
+                            onTap: () {
+                              addDescription();
+                            },
+                          ),
+                          GestureDetector(
+                            child: Text(
+                              "Cancel",
+                              style: TextStyle(fontSize: 20, color: myColors.red),
+                            ),
+                            onTap: () {
+                              _descriptionController.clear();
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Padding(padding: EdgeInsets.all(5.0)),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +246,7 @@ class _ServiceProfileState extends State<ServiceProfile> {
             .document(serviceID)
             .snapshots(),
         builder: (context, snapshots) {
-          if (!snapshots.hasData) {
+          if (!snapshots.hasData && _uploadedFileURL == null) {
             return SizedBox(
               width: double.infinity,
               height: MediaQuery.of(context).size.height * 0.25,
@@ -188,6 +278,40 @@ class _ServiceProfileState extends State<ServiceProfile> {
     setState(() {
       mapController = controller;
     });
+  }
+
+
+  Widget returnReviews() {
+    return new StreamBuilder(
+      stream: Firestore.instance
+          .collection('service')
+          .where("service_id", isEqualTo: serviceID)
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) {
+          return Loading();
+        }
+        return new ListView(
+          children: snapshot.data.documents.map((document) {
+            return Row(
+              children: <Widget>[
+              Container(
+              width: 50.0,
+              height: 50.0,
+              decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                image: new DecorationImage(
+                  image: NetworkImage(document["comments"]['comment']['pic'][1].toString()),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+              ],
+            );
+          }).toList(),
+        );
+      },
+    );
   }
 
   Widget drawScreen() {
@@ -292,29 +416,57 @@ class _ServiceProfileState extends State<ServiceProfile> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          'Off Days:',
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black,
-                              fontFamily: 'Bold'),
-                        ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        Row(
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
                           children: <Widget>[
                             Text(
-                                userDocument['off_days'][0].toString() + ' , '),
-                            Text(userDocument['off_days'][1].toString()),
+                              'Off Days:',
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontFamily: 'Bold'),
+                            ),
+                            SizedBox(
+                              width: 3,
+                            ),
+/*
+                            Row(
+                              children: <Widget>[
+                                Text(userDocument['off_days'][0].toString() + ' , '),
+                                Text(userDocument['off_days'][1].toString()),
+                              ],
+                            ),
+*/
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              'Time:',
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontFamily: 'Bold'),
+                            ),
+                            SizedBox(
+                              width: 3,
+                            ),
+                         /*   Row(
+                              children: <Widget>[
+                                Text(userDocument['time']['start_time'].toString() + ' to '),
+                                Text(userDocument['time']['end_time'].toString()),
+                              ],
+                            ),*/
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   Container(
                     height: 0.1,
@@ -342,12 +494,20 @@ class _ServiceProfileState extends State<ServiceProfile> {
                           Icons.edit,
                           color: Colors.grey,
                         ),
-                        onPressed: () {}),
+                        onPressed: () {
+                          _showDescriptionDialoge(context);
+                        }),
                   ),
                   Container(
                     height: 0.2,
                     width: double.infinity,
                     color: Colors.black,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text('Reviews',style: TextStyle(fontSize: 15,fontFamily: 'Bold'),),
+                    ),
                   ),
                 ],
               ),
@@ -355,4 +515,7 @@ class _ServiceProfileState extends State<ServiceProfile> {
           );
         });
   }
+
+
+
 }

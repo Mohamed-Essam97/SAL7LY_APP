@@ -4,11 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
 
 class ServiceDetails extends StatefulWidget {
+
+
+  var Lat;
+  var Long;
+
+
+  ServiceDetails({this.Lat, this.Long});
+
   @override
-  _ServiceDetailsState createState() => _ServiceDetailsState();
+  _ServiceDetailsState createState() => _ServiceDetailsState(Lat,Long);
 }
 
 class _ServiceDetailsState extends State<ServiceDetails> {
+
+  var Lat;
+  var Long;
+
+
+  _ServiceDetailsState(this.Lat, this.Long);
+
   List<String> serviceTypeList = [
     "ونش",
     "ورشه",
@@ -42,23 +57,35 @@ class _ServiceDetailsState extends State<ServiceDetails> {
   List<String> selectedServiceTypeList = List();
   List<String> selectedSpicalizationList = List();
 
-  var phone1 ;
-  var phone2 ;
-  List<String> phones = List();
-  String serviceName;
-  saveNameAndPhoneNumber() async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    print(user.uid);
-    final databaseReference = Firestore.instance;
-    await databaseReference
-        .collection("service")
-        .document("${user.uid}")
-        .updateData({
-      'name': serviceName,
-      'phone': phones,
-    });
-  }
+  TextEditingController _serviceNameController = TextEditingController();
+  TextEditingController _servicePhoneController = TextEditingController();
+  TextEditingController _phoneTwoController = TextEditingController();
 
+  final formKey = new GlobalKey<FormState>();
+
+
+  List phones;
+  saveNameAndPhoneNumber() async {
+    if (!formKey.currentState.validate()) {
+
+    } else {
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      print(user.uid);
+      DocumentReference documentReference = Firestore.instance.collection('service').document();
+      DocumentReference ref = Firestore.instance.collection('service_owner').document(user.uid);
+      documentReference
+          .setData({
+        'owner_id':user.uid,
+        'active':true,
+        'location':GeoPoint(Lat, Long),
+        'service_id': documentReference.documentID,
+        'name': _serviceNameController.text,
+        'service_owner': ref,
+        'phone':_servicePhoneController.text,
+        'rating':double.tryParse('0'),
+      });
+    }
+  }
 
 
 
@@ -97,44 +124,42 @@ class _ServiceDetailsState extends State<ServiceDetails> {
             ),
             Padding(
               padding: const EdgeInsets.all(15.0),
-              child: TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Service Name',
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      controller: _serviceNameController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Enter Service Name';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Service Name',
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _servicePhoneController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Enter Service Phone';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Service Phone',
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _phoneTwoController,
+                      decoration: InputDecoration(
+                        hintText: 'Service Phone',
+                      ),
+                    ),
+                  ],
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    serviceName = value;
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 1, 15, 15),
-              child: TextFormField(
-                keyboardType: TextInputType.numberWithOptions(),
-                decoration: InputDecoration(
-                  hintText: 'Service Phone Number',
-                ),
-                onChanged: (value) {
-                    phone1 = value;
-                    phones.add(phone1);
-                    },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 1, 15, 15),
-              child: TextFormField(
-                autofocus: false,
-                keyboardType: TextInputType.numberWithOptions(),
-                decoration: InputDecoration(
-                  hintText: 'Another Phone Number',
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    phone2 = value;
-                    phones.add(phone2);
-                  });
-                },
               ),
             ),
             Padding(
@@ -207,8 +232,9 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                   ),
                   onPressed: () {
                     saveNameAndPhoneNumber();
-                    Navigator.pushNamed(context, '/FinalDetails',arguments: {serviceName,phones});
-                    print(selectedSpicalizationList);
+                   /* Navigator.pushNamed(context, '/FinalDetails');
+                   */
+                   print(selectedSpicalizationList);
                     print(selectedServiceTypeList);
                   },
                 ),

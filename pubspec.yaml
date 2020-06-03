@@ -38,6 +38,7 @@ dependencies:
   international_phone_input: ^1.0.4
   intl_phone_number_input: ^0.4.2
   flutter_rating_bar: ^3.0.1+1
+  geocoder: ^0.2.1
 
 
 dev_dependencies:

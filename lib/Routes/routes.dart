@@ -3,7 +3,6 @@ import 'package:sal7ly_firebase/firebase_login/loginpage.dart';
 import 'package:sal7ly_firebase/firebase_login/signuppage.dart';
 import 'package:sal7ly_firebase/screens/EditProfile.dart';
 import 'package:sal7ly_firebase/screens/Home_Screen.dart';
-import 'package:sal7ly_firebase/screens/LogOut.dart';
 import 'package:sal7ly_firebase/screens/add_Service.dart';
 import 'package:sal7ly_firebase/screens/add_Service_Location.dart';
 import 'package:sal7ly_firebase/screens/final_ServiceDetails.dart';
@@ -25,7 +24,6 @@ import 'package:sal7ly_firebase/screens/updatePhone.dart';
       '/ServiceDetails':(context) => ServiceDetails(),
       '/ServiceProfile':(context) => ServiceProfile(),
       '/FinalDetails':(context) => FinalDetails(),
-      '/LogOut':(context) => LogOut(),
       '/EditProfile':(context) => EditProfile(),
       '/EditName':(context) => EditName(),
       '/EditPhone':(context) => EditPhone(),

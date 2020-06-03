@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
+import 'package:sal7ly_firebase/screens/serviceDetails.dart';
 
 class AddServiceLocation extends StatefulWidget {
   @override
@@ -12,34 +13,21 @@ class AddServiceLocation extends StatefulWidget {
 }
 
 class _AddServiceLocationState extends State<AddServiceLocation> {
+
+
+  var Lat;
+  var Long;
+
   getAndSaveCurrentLocation() async {
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-
     print(position.latitude);
     print(position.longitude);
-
-
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    print(user.uid);
-    final databaseReference = Firestore.instance;
-    await databaseReference
-        .collection("service")
-        .document("${user.uid}")
-        .setData({
-      'location' : new GeoPoint(position.latitude, position.longitude),
-      'service_owner':"/service_owner/${user.uid}",
-    });
-
-    /*   FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    final databaseReference = Firestore.instance;
-    await databaseReference
-        .collection("service")
-        .document("${user.uid}")
-        .setData({
-      'location': position,
-    });
- */
+    Lat = position.latitude;
+    Long = position.longitude;
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context)=>ServiceDetails(Lat:Lat,Long:Long),
+    ));
   }
 
   @override
@@ -92,7 +80,6 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
                 child: GestureDetector(
                   onTap: () {
                     getAndSaveCurrentLocation();
-                    Navigator.pushNamed(context, '/ServiceDetails');
                   },
                   child: Container(
                     decoration: BoxDecoration(
