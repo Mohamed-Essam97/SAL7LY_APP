@@ -39,6 +39,8 @@ dependencies:
   intl_phone_number_input: ^0.4.2
   flutter_rating_bar: ^3.0.1+1
   geocoder: ^0.2.1
+  android_intent: ^0.3.7+2
+  animated_text_kit: ^2.2.0
 
 
 dev_dependencies:
@@ -57,16 +59,22 @@ flutter:
     - assets/location.png
     - assets/location.svg
     - assets/icons/near.svg
+    - assets/Logo.png
+    - assets/Logo.jpg
     - assets/onBoarding/
 
   fonts:
   - family: Bold
     fonts:
-    - asset: fonts/OpenSans-Bold.ttf
+      - asset: fonts/OpenSans-Bold.ttf
 
   - family: Light
     fonts:
       - asset: fonts/OpenSans-Light.ttf
+
+  - family: Boldd
+    fonts:
+      - asset: fonts/QanelasSoft-Bold.otf
 
   - family: Regular
     fonts:

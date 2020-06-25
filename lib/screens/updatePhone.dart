@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:international_phone_input/international_phone_input.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -53,6 +55,12 @@ class _EditPhoneState extends State<EditPhone> {
                   selectorTextStyle: TextStyle(color: Colors.black),
                   initialValue: number,
                   textFieldController: controller,
+                  onInputValidated: (value) {
+                    if (value==null) {
+                      return 'Enter Your Phone Number';
+                    }
+                    return null;
+                  },
                 ),
                 /*    RaisedButton(
                   onPressed: () {
@@ -95,7 +103,7 @@ class _EditPhoneState extends State<EditPhone> {
                         color: myColors.green[900],
                         textColor: Colors.white,
                         onPressed: () {
-                          Navigator.of(context).pop();
+                            _updatePhone();
                           },
                       ),
                     ),
@@ -108,6 +116,26 @@ class _EditPhoneState extends State<EditPhone> {
       ),
     );
   }
+
+  Future<void> _updatePhone() async {
+    if (!formKey.currentState.validate()) {
+      setState(() {
+      });
+    } else {
+      setState(() {
+
+      });
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      print(user.uid);
+      Firestore.instance.collection('service_owner')
+          .document(user.uid)
+          .updateData({
+        'phone': controller.text,
+      });
+      Navigator.pop(context);
+    }
+  }
+
 
   void getPhoneNumber(String phoneNumber) async {
     PhoneNumber number =

@@ -19,13 +19,22 @@ class ServiceProfile extends StatefulWidget {
   ServiceProfile({this.serviceID, this.serviceName});
 
   @override
-  _ServiceProfileState createState() => _ServiceProfileState(serviceID, serviceName);
+  _ServiceProfileState createState() =>
+      _ServiceProfileState(serviceID, serviceName);
 }
 
 class _ServiceProfileState extends State<ServiceProfile> {
   String serviceID;
   String serviceName;
   _ServiceProfileState(this.serviceID, this.serviceName);
+
+  List<String> rimg = [];
+  List<String> rphone = [];
+  List<String> rcomment = new List<String>();
+  List<String> rsender = new List<String>();
+  List<int> rcounter = new List<int>();
+  List<Timestamp> rtime = new List<Timestamp>();
+  String phone_number;
 
   File imageFile;
   String _uploadedFileURL;
@@ -35,7 +44,7 @@ class _ServiceProfileState extends State<ServiceProfile> {
 
   final formKey = new GlobalKey<FormState>();
 
-
+/*
   Future uploadServiceImage() async {
     if(!_uploadedFileURL.isEmpty)
     {
@@ -51,20 +60,7 @@ class _ServiceProfileState extends State<ServiceProfile> {
       }
 
   }
-
-  Future uploadFile() async {
-    StorageReference storageReference = FirebaseStorage.instance
-        .ref()
-        .child('service/${Path.basename(imageFile.path)}}');
-    StorageUploadTask uploadTask = storageReference.putFile(imageFile);
-    await uploadTask.onComplete;
-    print('File Uploaded');
-    storageReference.getDownloadURL().then((fileURL) {
-        _uploadedFileURL = fileURL;
-        print(_uploadedFileURL);
-    });
-  }
-
+*/
 
   _openGallary(BuildContext context) async {
     var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -136,7 +132,7 @@ class _ServiceProfileState extends State<ServiceProfile> {
                           style: TextStyle(fontSize: 20, color: myColors.green),
                         ),
                         onTap: () {
-                          uploadServiceImage();
+                          uploadFile();
                           Navigator.of(context).pop();
                         },
                       ),
@@ -150,93 +146,22 @@ class _ServiceProfileState extends State<ServiceProfile> {
         });
   }
 
-
-  void addDescription() {
-    if (!formKey.currentState.validate()) {
-      print('Error');
-    } else {
-      Firestore.instance.collection('service')
+  Future uploadFile() async {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('service/${Path.basename(imageFile.path)}}');
+    StorageUploadTask uploadTask = storageReference.putFile(imageFile);
+    await uploadTask.onComplete;
+    print('File Uploaded');
+    storageReference.getDownloadURL().then((fileURL) {
+      _uploadedFileURL = fileURL;
+      print(_uploadedFileURL);
+      print(serviceID);
+      Firestore.instance
+          .collection('service')
           .document(serviceID)
-          .updateData({
-        'description': _descriptionController.text,
-      });
-      _descriptionController.clear();
-      Navigator.of(context).pop();
-    }
-  }
-
-  Future<void> _showDescriptionDialoge(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Enter The Service Description"),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Form(
-                        key: formKey,
-                        child: new TextFormField(
-                          controller: _descriptionController,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Please Write description';
-                            }
-                            return null;
-                          },
-                          decoration: const InputDecoration(hintText: "Description"),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          GestureDetector(
-                            child: Text(
-                              "Save",
-                              style: TextStyle(fontSize: 20, color: myColors.green),
-                            ),
-                            onTap: () {
-                              addDescription();
-                            },
-                          ),
-                          GestureDetector(
-                            child: Text(
-                              "Cancel",
-                              style: TextStyle(fontSize: 20, color: myColors.red),
-                            ),
-                            onTap: () {
-                              _descriptionController.clear();
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Padding(padding: EdgeInsets.all(5.0)),
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(serviceName),
-      ),
-      body: drawScreen(),
-    );
+          .updateData({'image': _uploadedFileURL});
+    });
   }
 
   Widget returnImage() {
@@ -269,6 +194,93 @@ class _ServiceProfileState extends State<ServiceProfile> {
         });
   }
 
+  void addDescription() {
+    if (!formKey.currentState.validate()) {
+      print('Error');
+    } else {
+      Firestore.instance.collection('service').document(serviceID).updateData({
+        'description': _descriptionController.text,
+      });
+      _descriptionController.clear();
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(serviceName),
+      ),
+      body: Container(child: drawScreen(context)),
+    );
+  }
+
+  Future<void> _showDescriptionDialoge(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Enter The Service Description"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Form(
+                        key: formKey,
+                        child: new TextFormField(
+                          controller: _descriptionController,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please Write description';
+                            }
+                            return null;
+                          },
+                          decoration:
+                              const InputDecoration(hintText: "Description"),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          GestureDetector(
+                            child: Text(
+                              "Save",
+                              style: TextStyle(
+                                  fontSize: 20, color: myColors.green),
+                            ),
+                            onTap: () {
+                              addDescription();
+                            },
+                          ),
+                          GestureDetector(
+                            child: Text(
+                              "Cancel",
+                              style:
+                                  TextStyle(fontSize: 20, color: myColors.red),
+                            ),
+                            onTap: () {
+                              _descriptionController.clear();
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Padding(padding: EdgeInsets.all(5.0)),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   GoogleMapController mapController;
   List<Position> kk = [];
   Position gg;
@@ -280,242 +292,396 @@ class _ServiceProfileState extends State<ServiceProfile> {
     });
   }
 
-
-  Widget returnReviews() {
-    return new StreamBuilder(
-      stream: Firestore.instance
-          .collection('service')
-          .where("service_id", isEqualTo: serviceID)
-          .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) {
-          return Loading();
-        }
-        return new ListView(
-          children: snapshot.data.documents.map((document) {
-            return Row(
-              children: <Widget>[
-              Container(
-              width: 50.0,
-              height: 50.0,
-              decoration: new BoxDecoration(
-                shape: BoxShape.circle,
-                image: new DecorationImage(
-                  image: NetworkImage(document["comments"]['comment']['pic'][1].toString()),
-                  fit: BoxFit.cover,
-                ),
+  Widget _buildGridItem(context, index) {
+    return Column(
+      children: <Widget>[
+        Material(
+          elevation: 7.0,
+          shadowColor: Colors.blueAccent.shade700,
+          child: InkWell(
+            onTap: () {},
+            child: Hero(
+              tag: index['title'],
+              child: Image.network(
+                index["pic"],
+                fit: BoxFit.fill,
+                height: 132,
+                width: 100,
               ),
             ),
-              ],
-            );
-          }).toList(),
-        );
-      },
+          ),
+        ),
+        Container(
+          width: 100,
+          margin: EdgeInsets.only(top: 10, bottom: 5),
+          child: Text(
+            index["content"],
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget drawScreen() {
-    return new StreamBuilder(
-        stream: Firestore.instance
-            .collection('service')
-            .document(serviceID)
-            .snapshots(),
-        builder: (context, snapshots) {
-          if (!snapshots.hasData) {
-            return Loading();
-          }
-          var userDocument = snapshots.data;
-          _isActive = userDocument['active'];
-          return Container(
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Stack(
-                    children: <Widget>[
-                      returnImage(),
-                      Transform.translate(
-                        offset: Offset(-180, 140),
-                        child: new Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            new CircleAvatar(
-                              backgroundColor: myColors.primaryText,
-                              radius: 20.0,
-                              child: IconButton(
-                                  icon: Icon(
-                                    Icons.camera_alt,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {
-                                    _showChoiceDialoge(context);
-                                  },
-                                  iconSize: 25.0),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
+
+  Widget returnRev(BuildContext context) {
+    return StreamBuilder(
+        stream: Firestore.instance.collection('service').document("9NdLU1IYB3YldVt515pW").snapshots(),
+        builder:(context, AsyncSnapshot snapshot) {
+          var doc = snapshot.data;
+          if (!snapshot.hasData)
+            return new Center(
+              child: Text("No Reviews for this service"),
+            );
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return new Text(
+                'Loading...',
+                textDirection: TextDirection.ltr,
+              );
+            default:
+              print(doc['comments']['comment']['content'].toString());
+              //print("dsadad");
+              if (doc['comments']['comment']['content'] == null) {
+                // ignore: missing_return
+                return Container(
+                  child: Text("No Reviews for this Service",
+                    style: TextStyle(color: Colors.black),),
+                );
+              }
+              else {
+                rcomment = List.from(doc['comments']['comment']['content']);
+                rsender = List.from(doc['comments']['comment']['sender']);
+                rcounter = List.from(doc['comments']['comment']['love']);
+                rtime= List.from(doc['comments']['comment']['at']);
+                rimg= List.from(doc['comments']['comment']['pic']);
+                return ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (context, index){
+                      if (index < rcomment.length){
+                        return new Container(
+                            child: Stack(
                                 children: <Widget>[
-                                  Container(
-                                    width: 10.0,
-                                    height: 10.0,
-                                    decoration: new BoxDecoration(
-                                      color:
-                                          _isActive ? Colors.green : Colors.red,
-                                      shape: BoxShape.circle,
+                                  Padding(padding: EdgeInsets.only(bottom: 40.0)),
+                                  Row(children: <Widget>[
+                                    CircleAvatar(
+                                      radius: 25.0,
+                                      backgroundImage: NetworkImage(
+                                          rimg[index]),
+                                    ),
+                                    new Padding(
+                                        padding: EdgeInsets.only(left: 7)),
+                                    (phone_number != null) ? {
+                                      rsender[index] = phone_number,
+                                      Text(rsender[index] + ": ", style: TextStyle(
+                                          color: Colors.black,
+                                          fontStyle: FontStyle.italic,
+                                          fontWeight: FontWeight.bold),)} :
+                                    Text(rsender[index] + ": ", style: TextStyle(
+                                        color: Colors.black,
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.bold)),
+                                    Padding(
+                                        padding: EdgeInsets.only(left: 40)),
+                                    /*Text(timeago.format(rtime[index].toDate())),*/
+                                  ],
+                                  ),
+                                  Container(height: 20),
+                                  Padding(
+                                    padding: EdgeInsets.all(36),
+                                    child: Card(color: Color(0xffAD0514),
+                                      child: ListTile(
+                                        title: Text(rcomment[index],
+                                          style: TextStyle(color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle: FontStyle.italic),),),
                                     ),
                                   ),
-                                  SizedBox(width: 3),
-                                  Text(_isActive ? 'Active' : 'Not Active'),
-                                ],
-                              ),
-                            ),
-                            RatingBarIndicator(
-                              rating: userDocument["rating"],
-                              unratedColor: Colors.grey.shade300,
-                              itemBuilder: (context, index) => Icon(
-                                Icons.star,
-                                color: myColors.green,
-                              ),
-                              itemCount: 5,
-                              itemSize: 30.0,
-                              direction: Axis.horizontal,
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                                  Padding(
+                                      padding: EdgeInsets.only(top: 90, left: 320),
+                                      child: Column(children: <Widget>[
+                                        IconButton(
+                                            icon: Icon(Icons.favorite),
+                                            color: Color(0xffAD0514),
+//highlightColor: Colors.red,
+                                            onPressed: () {
+
+                                            }
+                                        ),
+                                        Text("${rcounter[index]} love"),
+
+                                      ],
+                                      )
+                                  )
+                                ]
+                            )
+                        );
+                      }
+                    }
+                );
+              }
+          }
+        }          );
+  }
+
+/*
+  Widget returnReviews(BuildContext context) {
+    return new StreamBuilder(
+      stream: Firestore.instance
+          .collection('service')
+          .document("9NdLU1IYB3YldVt515pW")
+          .snapshots(),
+      builder: (context, AsyncSnapshot snapshot) {
+        var doc = snapshot.data;
+        if (!snapshot.hasData)
+          return new Center(
+            child: Text("No Reviews for this service"),
+          );
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return new Text(
+              'Loading...',
+              textDirection: TextDirection.ltr,
+            );
+          default:
+            print(doc['comments']['comment']['content'].toString());
+            //print("dsadad");
+            if (doc['comments']['comment']['content'] == null &&
+                serviceName == null) {
+              return Container(
+                child: Text(
+                  "No Reviews for this Service",
+                  style: TextStyle(color: Colors.black),
+                ),
+              );
+            } else {
+              return Column(
+                children: <Widget>[
+                  drawScreen(),
+                  Container(
+                      child: returnRev(),),
+                ],
+              );
+            }
+        }
+      },
+    );
+  }
+*/
+
+  Widget drawScreen(BuildContext context) {
+    return SingleChildScrollView(
+      child: StreamBuilder(
+          stream: Firestore.instance
+              .collection('service')
+              .document(serviceID)
+              .snapshots(),
+          builder: (context, snapshots) {
+            if (!snapshots.hasData) {
+              return Loading();
+            }
+            var userDocument = snapshots.data;
+            _isActive = userDocument['active'];
+            return Container(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Stack(
+                      children: <Widget>[
+                        returnImage(),
+                        Transform.translate(
+                          offset: Offset(-180, 140),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                userDocument["name"].toString(),
-                                style:
-                                    TextStyle(fontSize: 30, fontFamily: 'Bold'),
-                              ),
-                              Text(
-                                userDocument["phone"][0].toString(),
-                                style:
-                                    TextStyle(fontSize: 15, color: Colors.grey),
+                              new CircleAvatar(
+                                backgroundColor: myColors.primaryText,
+                                radius: 20.0,
+                                child: IconButton(
+                                    icon: Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () {
+                                      _showChoiceDialoge(context);
+                                    },
+                                    iconSize: 25.0),
                               ),
                             ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              'Off Days:',
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black,
-                                  fontFamily: 'Bold'),
-                            ),
-                            SizedBox(
-                              width: 3,
-                            ),
-/*
-                            Row(
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: 10.0,
+                                      height: 10.0,
+                                      decoration: new BoxDecoration(
+                                        color:
+                                            _isActive ? Colors.green : Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    SizedBox(width: 3),
+                                    Text(_isActive ? 'Active' : 'Not Active'),
+                                  ],
+                                ),
+                              ),
+                              RatingBarIndicator(
+                                rating: userDocument["rating"],
+                                unratedColor: Colors.grey.shade300,
+                                itemBuilder: (context, index) => Icon(
+                                  Icons.star,
+                                  color: myColors.green,
+                                ),
+                                itemCount: 5,
+                                itemSize: 30.0,
+                                direction: Axis.horizontal,
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Text(userDocument['off_days'][0].toString() + ' , '),
-                                Text(userDocument['off_days'][1].toString()),
+                                Text(
+                                  userDocument["name"].toString(),
+                                  style:
+                                      TextStyle(fontSize: 30, fontFamily: 'Bold'),
+                                ),
+                                Text(
+                                  userDocument["phone"][0].toString(),
+                                  style:
+                                      TextStyle(fontSize: 15, color: Colors.grey),
+                                ),
                               ],
                             ),
-*/
-                          ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                'Off Days:',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontFamily: 'Bold'),
+                              ),
+                              SizedBox(
+                                width: 3,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text(userDocument['off_days'][0].toString() +
+                                      ' , '),
+                                  Text(userDocument['off_days'][1].toString()),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                'Time:',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontFamily: 'Bold'),
+                              ),
+                              SizedBox(
+                                width: 3,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text(userDocument['time']['start_time']
+                                          .toString() +
+                                      ' to '),
+                                  Text(userDocument['time']['end_time']
+                                      .toString()),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      height: 0.1,
+                      width: double.infinity,
+                      color: Colors.black,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 300, top: 8),
+                      child: Text(
+                        'Description:',
+                        style: TextStyle(color: Colors.black, fontSize: 15),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        userDocument['description'].toString(),
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 320),
+                      child: IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            _showDescriptionDialoge(context);
+                          }),
+                    ),
+                    Container(
+                      height: 0.2,
+                      width: double.infinity,
+                      color: Colors.black,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: Text(
+                          'Reviews',
+                          style: TextStyle(fontSize: 15, fontFamily: 'Bold'),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              'Time:',
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black,
-                                  fontFamily: 'Bold'),
-                            ),
-                            SizedBox(
-                              width: 3,
-                            ),
-                         /*   Row(
-                              children: <Widget>[
-                                Text(userDocument['time']['start_time'].toString() + ' to '),
-                                Text(userDocument['time']['end_time'].toString()),
-                              ],
-                            ),*/
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    height: 0.1,
-                    width: double.infinity,
-                    color: Colors.black,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 300, top: 8),
-                    child: Text(
-                      'Description:',
-                      style: TextStyle(color: Colors.black, fontSize: 15),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      userDocument['description'].toString(),
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 320),
-                    child: IconButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: Colors.grey,
-                        ),
-                        onPressed: () {
-                          _showDescriptionDialoge(context);
-                        }),
-                  ),
-                  Container(
-                    height: 0.2,
-                    width: double.infinity,
-                    color: Colors.black,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Text('Reviews',style: TextStyle(fontSize: 15,fontFamily: 'Bold'),),
-                    ),
-                  ),
-                ],
+                    returnRev(context),
+                  ],
+                ),
               ),
-            ),
-          );
-        });
+            );
+          }),
+    );
   }
-
-
-
 }

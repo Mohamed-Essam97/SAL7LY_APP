@@ -159,6 +159,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   File imageFile;
   String _uploadedFileURL;
 
+/*
   Future uploadProfileImage() async {
     uploadFile();
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
@@ -172,19 +173,25 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           .updateData({'imageurl': _uploadedFileURL});
     }
   }
+*/
 
   Future uploadFile() async {
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
         .child('users/${Path.basename(imageFile.path)}}');
     StorageUploadTask uploadTask = storageReference.putFile(imageFile);
-
     await uploadTask.onComplete;
     print('File Uploaded');
     storageReference.getDownloadURL().then((fileURL) {
-      setState(() {
+      setState(() async {
         _uploadedFileURL = fileURL;
         print(_uploadedFileURL);
+        FirebaseUser user = await FirebaseAuth.instance.currentUser();
+        print(user.uid);
+        Firestore.instance
+            .collection('service_owner')
+            .document(user.uid)
+            .updateData({'imageurl': _uploadedFileURL});
       });
     });
   }
@@ -257,7 +264,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           style: TextStyle(fontSize: 20, color: myColors.green),
                         ),
                         onTap: () {
-                          uploadProfileImage();
+                          uploadFile();
                           Navigator.of(context).pop();
                         },
                       ),
