@@ -14,7 +14,7 @@ class AddServiceLocation extends StatefulWidget {
 
 class _AddServiceLocationState extends State<AddServiceLocation> {
 
-  List <String> service_type_name=new List();
+  List <ad> service_type_name=new List();
   var Lat;
   var Long;
   List <DocumentReference> service_type_refernce=new List();
@@ -31,7 +31,7 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
     Lat = position.latitude;
     Long = position.longitude;
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context)=>ServiceDetails(Lat:Lat,Long:Long,serviceTypeList:service_type_name,service_type_refernce:service_type_refernce,splizatian_name:splizatian_name,splizatin_refernce:splizatin_refernce),
+      builder: (context)=>ServiceDetails(Lat:Lat,Long:Long,serviceTypeList:service_type_name,service_type_refernce:spl,splizatian_name:splizatian_name,splizatin_refernce:splizatin_refernce),
     ));
   }
   List <ad> type=new List();
@@ -60,11 +60,13 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
                     textDirection: TextDirection.ltr,
                   );
                 default:
+                  DocumentReference  amr ;
                   type=new List();
+                  service_type_name = new List();
                   snapshot.data.documents.forEach((element) {
-                    service_type_name.add(element["name"]);
+                    service_type_name.add(new ad(element['name'],element.reference,amr));
                     service_type_refernce.add(element.reference);
-                    type.add(new ad(element["name"], element.reference));
+                    type.add(new ad(element["name"], element.reference,amr));
 
                   });
 
@@ -93,7 +95,7 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
                             snapshott.data.documents.forEach((element) {
                               splizatian_name.add(element["name"]);
                               splizatin_refernce.add(element["service_type"]);
-                              spl.add(new ad(element["name"], element["service_type"]));
+                              spl.add(new ad(element["name"], element.reference,element['service_type']));
 
                             });
                             return Container(
@@ -206,7 +208,8 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
 class ad{
   String x;
   DocumentReference xs;
-  ad(this.x,this.xs);
+  DocumentReference service_Type_Ref;
+  ad(this.x,this.xs,this.service_Type_Ref);
   get xx=>x;
   get xxs=>xs;
 
