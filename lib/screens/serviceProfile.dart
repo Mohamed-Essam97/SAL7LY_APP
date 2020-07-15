@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:like_button/like_button.dart';
 import 'package:path/path.dart' as Path;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,7 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
 import 'package:sal7ly_firebase/screens/chat/Widgets/Loading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 class ServiceProfile extends StatefulWidget {
   String serviceID;
   String serviceName;
@@ -35,6 +36,9 @@ class _ServiceProfileState extends State<ServiceProfile> {
   List<int> rcounter = new List<int>();
   List<Timestamp> rtime = new List<Timestamp>();
   String phone_number;
+
+  List<String> servicePhone = [];
+
 
   File imageFile;
   String _uploadedFileURL;
@@ -67,7 +71,7 @@ class _ServiceProfileState extends State<ServiceProfile> {
     this.setState(() {
       imageFile = picture;
     });
-    uploadFile();
+   // uploadFile();
     Navigator.of(context).pop();
     _showImageDialoge(context);
   }
@@ -77,7 +81,7 @@ class _ServiceProfileState extends State<ServiceProfile> {
     this.setState(() {
       imageFile = picture;
     });
-    uploadFile();
+   // uploadFile();
     Navigator.of(context).pop();
     _showImageDialoge(context);
   }
@@ -329,105 +333,155 @@ class _ServiceProfileState extends State<ServiceProfile> {
     );
   }
 
+  List<String> days = new List<String>();
 
   Widget returnRev(BuildContext context) {
-    return StreamBuilder(
-        stream: Firestore.instance.collection('service').document("9NdLU1IYB3YldVt515pW").snapshots(),
-        builder:(context, AsyncSnapshot snapshot) {
-          var doc = snapshot.data;
-          if (!snapshot.hasData)
-            return new Center(
-              child: Text("No Reviews for this service"),
-            );
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return new Text(
-                'Loading...',
-                textDirection: TextDirection.ltr,
-              );
-            default:
-              print(doc['comments']['comment']['content'].toString());
-              //print("dsadad");
-              if (doc['comments']['comment']['content'] == null) {
-                // ignore: missing_return
-                return Container(
-                  child: Text("No Reviews for this Service",
-                    style: TextStyle(color: Colors.black),),
-                );
-              }
-              else {
-                rcomment = List.from(doc['comments']['comment']['content']);
-                rsender = List.from(doc['comments']['comment']['sender']);
-                rcounter = List.from(doc['comments']['comment']['love']);
-                rtime= List.from(doc['comments']['comment']['at']);
-                rimg= List.from(doc['comments']['comment']['pic']);
-                return ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (context, index){
-                      if (index < rcomment.length){
-                        return new Container(
-                            child: Stack(
-                                children: <Widget>[
-                                  Padding(padding: EdgeInsets.only(bottom: 40.0)),
-                                  Row(children: <Widget>[
-                                    CircleAvatar(
-                                      radius: 25.0,
-                                      backgroundImage: NetworkImage(
-                                          rimg[index]),
-                                    ),
-                                    new Padding(
-                                        padding: EdgeInsets.only(left: 7)),
-                                    (phone_number != null) ? {
-                                      rsender[index] = phone_number,
-                                      Text(rsender[index] + ": ", style: TextStyle(
-                                          color: Colors.black,
-                                          fontStyle: FontStyle.italic,
-                                          fontWeight: FontWeight.bold),)} :
-                                    Text(rsender[index] + ": ", style: TextStyle(
-                                        color: Colors.black,
-                                        fontStyle: FontStyle.italic,
-                                        fontWeight: FontWeight.bold)),
-                                    Padding(
-                                        padding: EdgeInsets.only(left: 40)),
-                                    /*Text(timeago.format(rtime[index].toDate())),*/
-                                  ],
+    return Container(
+      height : 260,
+      child : ListView.builder(
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) {
+            if (index < rcomment.length) {
+              return new Container(
+                  child: Stack(children: <
+                      Widget>[
+                    Padding(
+                        padding:
+                        EdgeInsets.only(
+                            bottom: 40.0)),
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left:8.0),
+                          child: CircleAvatar(
+                            radius: 20.0,
+                            backgroundImage:
+                            NetworkImage(
+                                rimg[index]),
+                          ),
+                        ),
+                        new Padding(
+                            padding:
+                            EdgeInsets.only(
+                                left: 7)),
+                        (phone_number != null)
+                            ? {
+                          rsender[index] =
+                              phone_number,
+                          Text(
+                            rsender[index] +
+                                ": ",
+                            style: TextStyle(
+                                color: myColors
+                                    .secondText,
+                                fontFamily: 'Regular'),
+                          )
+                        }
+                            : Text(
+                            rsender[index],
+                            style: TextStyle(
+                                color: myColors
+                                    .secondText,
+                                fontFamily: 'Bold')),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            timeago.format(
+                                rtime[index]
+                                    .toDate()),
+                            style: TextStyle(
+                                color: myColors
+                                    .primaryText,
+                                fontFamily: "Regular"),),
+                        ),
+                      ],
+                    ),
+                    Container(height: 20),
+                    Padding(
+                        padding:
+                        EdgeInsets.all(36),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          elevation: 0,
+                          color:
+                          Colors.grey[300],
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                ListTile(
+                                  title: Text(
+                                    rcomment[index],
+                                    style: TextStyle(
+                                        color: Colors
+                                            .black,
+                                        fontFamily: "Semi_Bold"),
                                   ),
-                                  Container(height: 20),
-                                  Padding(
-                                    padding: EdgeInsets.all(36),
-                                    child: Card(color: Color(0xffAD0514),
-                                      child: ListTile(
-                                        title: Text(rcomment[index],
-                                          style: TextStyle(color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontStyle: FontStyle.italic),),),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: LikeButton(
+                                    onTap:
+                                    onLikeButtonTapped,
+                                    size: 48.0,
+                                    circleColor: CircleColor(
+                                        start:myColors.red,
+                                        end: myColors.red),
+                                    bubblesColor:
+                                    BubblesColor(
+                                      dotPrimaryColor:
+                                      myColors.red,
+                                      dotSecondaryColor:
+                                      Color(
+                                          0xffAD0514),
                                     ),
+                                    likeCount:
+                                    rcounter[
+                                    index],
+                                    likeBuilder: (bool
+                                    isLiked) {
+                                      return Icon(
+                                        Icons
+                                            .favorite_border,
+                                        color: isLiked
+                                            ? Color(
+                                            0xffAD0514)
+                                            : null,
+                                        size: 24.0,
+                                      );
+                                    },
+                                    countBuilder: (int
+                                    count,
+                                        bool isLiked,
+                                        String text) {
+                                      var color = isLiked
+                                          ? Colors
+                                          .black
+                                          : Colors
+                                          .black;
+                                      int result2;
+                                      if (count ==
+                                          0) {
+                                        result2 = 0;
+                                      }
+                                      else
+                                        rcounter[
+                                        index] =
+                                            count;
+                                      //return result;
+                                    },
                                   ),
-                                  Padding(
-                                      padding: EdgeInsets.only(top: 90, left: 320),
-                                      child: Column(children: <Widget>[
-                                        IconButton(
-                                            icon: Icon(Icons.favorite),
-                                            color: Color(0xffAD0514),
-//highlightColor: Colors.red,
-                                            onPressed: () {
-
-                                            }
-                                        ),
-                                        Text("${rcounter[index]} love"),
-
-                                      ],
-                                      )
-                                  )
-                                ]
-                            )
-                        );
-                      }
-                    }
-                );
-              }
-          }
-        }          );
+                                )
+                              ]
+                          ),
+                        )
+                    ),
+                  ]));
+            }
+          }),
+    );
   }
 
 /*
@@ -475,6 +529,10 @@ class _ServiceProfileState extends State<ServiceProfile> {
   }
 */
 
+
+
+  List<String> phones = [];
+
   Widget drawScreen(BuildContext context) {
     return SingleChildScrollView(
       child: StreamBuilder(
@@ -487,6 +545,211 @@ class _ServiceProfileState extends State<ServiceProfile> {
               return Loading();
             }
             var userDocument = snapshots.data;
+           // print(userDocument['comments']['comment']['content'].toString());
+            //print("dsadad");
+            if (userDocument['comments'] == null) {
+            // ignore: missing_return
+              _isActive = userDocument['active'];
+              days = List.from(userDocument['off_days']);
+              phones = List.from(userDocument['phone']);
+              int len =phones.length;
+              return Column(
+              children: <Widget>[
+                Stack(
+                  children: <Widget>[
+                    returnImage(),
+                    Transform.translate(
+                      offset: Offset(-180, 140),
+                      child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          new CircleAvatar(
+                            backgroundColor: myColors.primaryText,
+                            radius: 20.0,
+                            child: IconButton(
+                                icon: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  _showChoiceDialoge(context);
+                                },
+                                iconSize: 25.0),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  width: 10.0,
+                                  height: 10.0,
+                                  decoration: new BoxDecoration(
+                                    color:
+                                    _isActive ? Colors.green : Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                SizedBox(width: 3),
+                                Text(_isActive ? 'Active' : 'Not Active'),
+                              ],
+                            ),
+                          ),
+                          RatingBarIndicator(
+                            rating: userDocument["rating"],
+                            unratedColor: Colors.grey.shade300,
+                            itemBuilder: (context, index) => Icon(
+                              Icons.star,
+                              color: myColors.green,
+                            ),
+                            itemCount: 5,
+                            itemSize: 30.0,
+                            direction: Axis.horizontal,
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              userDocument["name"].toString(),
+                              style:
+                              TextStyle(fontSize: 30, fontFamily: 'Bold'),
+                            ),
+                            Text(
+                              phones.toString().substring(1,phones.toString().length-1),
+                              style:
+                              TextStyle(fontSize: 15, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Off Days:',
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.black,
+                                fontFamily: 'Bold'),
+                          ),
+                          SizedBox(
+                            width: 3,
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text(days.toString().substring(1,days.toString().length-1)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Time:',
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.black,
+                                fontFamily: 'Bold'),
+                          ),
+                          SizedBox(
+                            width: 3,
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text(userDocument['time']['start_time']
+                                  .toString() +
+                                  ' to '),
+                              Text(userDocument['time']['end_time']
+                                  .toString()),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  height: 0.1,
+                  width: double.infinity,
+                  color: Colors.black,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 300, top: 8),
+                  child: Text(
+                    'Description:',
+                    style: TextStyle(color: Colors.black, fontSize: 15 , fontFamily: 'Bold'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    userDocument['description'].toString(),
+                    style: TextStyle(color: Colors.grey,fontFamily: 'Regular'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 320),
+                  child: IconButton(
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        _showDescriptionDialoge(context);
+                      }),
+                ),
+                Container(
+                  height: 0.2,
+                  width: double.infinity,
+                  color: Colors.black,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Text(
+                      'Reviews',
+                      style: TextStyle(fontSize: 15, fontFamily: 'Bold'),
+                    ),
+                  ),
+                ),
+                Container(
+                child: Text("No Reviews for this Service",
+                style: TextStyle(color: Colors.black),),
+                ),
+              ],
+            );
+            }
+            else {
+            rcomment = List.from(userDocument['comments']['comment']['content']);
+            rsender = List.from(userDocument['comments']['comment']['sender']);
+            rcounter = List.from(userDocument['comments']['comment']['love']);
+            rtime= List.from(userDocument['comments']['comment']['at']);
+            rimg= List.from(userDocument['comments']['comment']['pic']);
             _isActive = userDocument['active'];
             return Container(
               child: SingleChildScrollView(
@@ -641,14 +904,14 @@ class _ServiceProfileState extends State<ServiceProfile> {
                       padding: const EdgeInsets.only(right: 300, top: 8),
                       child: Text(
                         'Description:',
-                        style: TextStyle(color: Colors.black, fontSize: 15),
+                        style: TextStyle(color: Colors.black, fontSize: 15 , fontFamily: 'Bold'),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         userDocument['description'].toString(),
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(color: Colors.grey,fontFamily: 'Regular'),
                       ),
                     ),
                     Padding(
@@ -677,11 +940,256 @@ class _ServiceProfileState extends State<ServiceProfile> {
                       ),
                     ),
                     returnRev(context),
+
                   ],
                 ),
               ),
             );
+          }
           }),
     );
   }
+
+  Widget drawScreenn(BuildContext context) {
+    return SingleChildScrollView(
+      child: StreamBuilder(
+          stream: Firestore.instance
+              .collection('service')
+              .document(serviceID)
+              .snapshots(),
+          builder: (context, snapshots) {
+            if (!snapshots.hasData) {
+              return Loading();
+            }
+            var userDocument = snapshots.data;
+            print(userDocument['comments']['comment']['content'].toString());
+            //print("dsadad");
+            if (userDocument['comments']['comment']['content'] == null) {
+              // ignore: missing_return
+              return Container(
+                child: Text("No Reviews for this Service",
+                  style: TextStyle(color: Colors.black),),
+              );
+            }
+            else {
+              rcomment = List.from(userDocument['comments']['comment']['content']);
+              rsender = List.from(userDocument['comments']['comment']['sender']);
+              rcounter = List.from(userDocument['comments']['comment']['love']);
+              rtime= List.from(userDocument['comments']['comment']['at']);
+              rimg= List.from(userDocument['comments']['comment']['pic']);
+              _isActive = userDocument['active'];
+              return Container(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      Stack(
+                        children: <Widget>[
+                          returnImage(),
+                          Transform.translate(
+                            offset: Offset(-180, 140),
+                            child: new Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                new CircleAvatar(
+                                  backgroundColor: myColors.primaryText,
+                                  radius: 20.0,
+                                  child: IconButton(
+                                      icon: Icon(
+                                        Icons.camera_alt,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {
+                                        _showChoiceDialoge(context);
+                                      },
+                                      iconSize: 25.0),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Container(
+                                        width: 10.0,
+                                        height: 10.0,
+                                        decoration: new BoxDecoration(
+                                          color:
+                                          _isActive ? Colors.green : Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      SizedBox(width: 3),
+                                      Text(_isActive ? 'Active' : 'Not Active'),
+                                    ],
+                                  ),
+                                ),
+                                RatingBarIndicator(
+                                  rating: userDocument["rating"],
+                                  unratedColor: Colors.grey.shade300,
+                                  itemBuilder: (context, index) => Icon(
+                                    Icons.star,
+                                    color: myColors.green,
+                                  ),
+                                  itemCount: 5,
+                                  itemSize: 30.0,
+                                  direction: Axis.horizontal,
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(6.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    userDocument["name"].toString(),
+                                    style:
+                                    TextStyle(fontSize: 30, fontFamily: 'Bold'),
+                                  ),
+                                  Text(
+                                    userDocument["phone"][0].toString(),
+                                    style:
+                                    TextStyle(fontSize: 15, color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  'Off Days:',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                      fontFamily: 'Bold'),
+                                ),
+                                SizedBox(
+                                  width: 3,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text(userDocument['off_days'][0].toString() +
+                                        ' , '),
+                                    Text(userDocument['off_days'][1].toString()),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  'Time:',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                      fontFamily: 'Bold'),
+                                ),
+                                SizedBox(
+                                  width: 3,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text(userDocument['time']['start_time']
+                                        .toString() +
+                                        ' to '),
+                                    Text(userDocument['time']['end_time']
+                                        .toString()),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        height: 0.1,
+                        width: double.infinity,
+                        color: Colors.black,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 300, top: 8),
+                        child: Text(
+                          'Description:',
+                          style: TextStyle(color: Colors.black, fontSize: 15),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          userDocument['description'].toString(),
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 320),
+                        child: IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              _showDescriptionDialoge(context);
+                            }),
+                      ),
+                      Container(
+                        height: 0.2,
+                        width: double.infinity,
+                        color: Colors.black,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Text(
+                            'Reviews',
+                            style: TextStyle(fontSize: 15, fontFamily: 'Bold'),
+                          ),
+                        ),
+                      ),
+
+                      returnRev(context),
+                    ],
+                  ),
+                ),
+              );
+            }
+          }),
+    );
+  }
+
+  Future<bool> onLikeButtonTapped(bool isLiked) async {
+    /// send your request here
+    // final bool success= await sendRequest();
+    Firestore.instance.collection("service").document(serviceID).updateData({
+      "comments": {
+        'comment': {
+          'content': rcomment,
+          'sender': rsender,
+          'love': rcounter,
+          'at': rtime,
+          'pic': rimg,
+        }
+      }
+    });
+}
 }

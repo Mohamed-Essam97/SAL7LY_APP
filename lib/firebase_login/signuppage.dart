@@ -1,7 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-//import 'package:sal7ly_firebase/firebase_login/home.dart';
+import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+//import 'package:sal7ly_firebase/firebase_login/home.dart';
+import 'package:path/path.dart' as Path;
 //services
 import 'package:sal7ly_firebase/firebase_login/services/usermanagment.dart';
 import 'package:sal7ly_firebase/firebase_login/homepage.dart';
@@ -24,6 +29,266 @@ class _SignupPageState extends State<SignupPage> {
 
   final formKey = new GlobalKey<FormState>();
 
+
+  File imageFile;
+  String _uploadedFileURL;
+
+  File imageIdFile;
+  String _uploadedImageIdFileURL;
+
+
+  Future uploadFile() async {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('service_owner/${Path.basename(imageFile.path)}}');
+    StorageUploadTask uploadTask = storageReference.putFile(imageFile);
+    await uploadTask.onComplete;
+    print('File Uploaded');
+    storageReference.getDownloadURL().then((fileURL) {
+      setState(() async {
+        _uploadedFileURL = fileURL;
+        print(_uploadedFileURL);
+      });
+    });
+  }
+
+  _openGallary(BuildContext context) async {
+    var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
+    this.setState(() {
+      imageFile = picture;
+    });
+    Navigator.of(context).pop();
+    _showImageDialoge(context);
+  }
+
+  _openCamera(BuildContext context) async {
+    var picture = await ImagePicker.pickImage(source: ImageSource.camera);
+    this.setState(() {
+      imageFile = picture;
+    });
+    Navigator.of(context).pop();
+    _showImageDialoge(context);
+  }
+
+  Future<void> _showChoiceDialoge(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Make a Choice! "),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  GestureDetector(
+                    child: Text("Gallary"),
+                    onTap: () {
+                      _openGallary(context);
+                    },
+                  ),
+                  Padding(padding: EdgeInsets.all(5.0)),
+                  GestureDetector(
+                    child: Text("Camera"),
+                    onTap: () {
+                      _openCamera(context);
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<void> _showImageDialoge(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Image"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Image.file(imageFile, width: 400, height: 400),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      GestureDetector(
+                        child: Text(
+                          "Save",
+                          style: TextStyle(fontSize: 20, color: myColors.green),
+                        ),
+                        onTap: () {
+                          uploadFile();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
+                  Padding(padding: EdgeInsets.all(5.0)),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+
+  Future uploadImageIdFile() async {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('service_owner/${Path.basename(imageIdFile.path)}}');
+    StorageUploadTask uploadTask = storageReference.putFile(imageIdFile);
+    await uploadTask.onComplete;
+    print('File Uploaded');
+    storageReference.getDownloadURL().then((fileURL) {
+      setState(() async {
+        _uploadedImageIdFileURL = fileURL;
+        print(_uploadedImageIdFileURL);
+      });
+    });
+  }
+
+  _openGallaryy(BuildContext context) async {
+    var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
+    this.setState(() {
+      imageIdFile = picture;
+    });
+    Navigator.of(context).pop();
+    _showImageDialoge(context);
+  }
+
+  _openCameraa(BuildContext context) async {
+    var picture = await ImagePicker.pickImage(source: ImageSource.camera);
+    this.setState(() {
+      imageIdFile = picture;
+    });
+    Navigator.of(context).pop();
+    _showImageDialogee(context);
+  }
+
+  Future<void> _showChoiceDialogee(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Make a Choice! "),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  GestureDetector(
+                    child: Text("Gallary"),
+                    onTap: () {
+                      _openGallaryy(context);
+                    },
+                  ),
+                  Padding(padding: EdgeInsets.all(5.0)),
+                  GestureDetector(
+                    child: Text("Camera"),
+                    onTap: () {
+                      _openCameraa(context);
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<void> _showImageDialogee(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Image"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Image.file(imageIdFile, width: 400, height: 400),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      GestureDetector(
+                        child: Text(
+                          "Save",
+                          style: TextStyle(fontSize: 20, color: myColors.green),
+                        ),
+                        onTap: () {
+                          uploadImageIdFile();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
+                  Padding(padding: EdgeInsets.all(5.0)),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+
+  Widget returnImage() {
+    return Stack(
+      children: <Widget>[
+        Imag(),
+        Transform.translate(
+          offset: Offset(75, 75),
+          child: CircleAvatar(
+            backgroundColor: Colors.grey.shade300,
+            radius: 20.0,
+            child: IconButton(
+                icon: Icon(
+                  Icons.add,
+                  color: myColors.green,
+                ),
+                onPressed: () {
+                  _showChoiceDialoge(context);
+                },
+                iconSize: 25.0),
+          ),
+        ),
+      ],
+    );
+  }
+
+Widget Imag()
+{
+  if(imageFile == null){
+    return Container(
+      width: 110.0,
+      height: 110.0,
+      decoration: new BoxDecoration(
+        shape: BoxShape.circle,
+        image: new DecorationImage(
+          image: AssetImage('assets/first.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }else
+    {
+    return Container(
+        width: 110.0,
+        height: 110.0,
+        decoration: new BoxDecoration(
+          shape: BoxShape.circle,
+          image: new DecorationImage(
+              image: FileImage(imageFile),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
+
+}
+
+
   bool _autovalidation = false;
   bool _isLoading = false;
   String _error ;
@@ -38,7 +303,7 @@ class _SignupPageState extends State<SignupPage> {
   String _password;
 
   UserManagement userManagement = new UserManagement();
-
+  FirebaseMessaging xnm = new FirebaseMessaging();
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -51,16 +316,22 @@ class _SignupPageState extends State<SignupPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(right: 80,bottom: 30),
+                  Center(
                     child: Text(
-                      "Sign Up To SAL7LY",
+                      "Register",
                       style: TextStyle(
                         fontFamily: 'Bold',
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  returnImage(),
+                  SizedBox(
+                    height: 20,
                   ),
                   TextFormField(
                     textCapitalization: TextCapitalization.words,
@@ -173,6 +444,52 @@ class _SignupPageState extends State<SignupPage> {
                     obscureText: true,
                   ),
                   SizedBox(height: 30.0),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Container(
+                      height: 40.0,
+                      child: GestureDetector(
+                        onTap: () {
+                          _showChoiceDialogee(context);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: myColors.red,
+                              style: BorderStyle.solid,
+                              width: 1.0,
+                            ),
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Icon(
+                                  Icons.camera_enhance,
+                                  color: myColors.red,
+                                  size: 20.0,
+                                ),
+                              ),
+                              Text(
+                                "Add your National Id Image ",
+                                style: TextStyle(
+                                  color: myColors.red,
+                                  fontFamily: 'SemiBold',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30.0),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -227,9 +544,10 @@ class _SignupPageState extends State<SignupPage> {
     ));
   }
 
+  bool check=false;
    signUp() async {
 
-    if ( ! formKey.currentState.validate()) {
+    if ( ! formKey.currentState.validate() && imageIdFile==null) {
       setState(() {
         _autovalidation = true;
       });
@@ -253,6 +571,8 @@ class _SignupPageState extends State<SignupPage> {
         'name': _nameController.text,
         'phone': _phoneNumber.text,
         'uid': user.uid,
+        'imageurl': _uploadedFileURL,
+        'national_id':_uploadedImageIdFileURL,
       });
       Navigator.of(context).pushNamedAndRemoveUntil(
           '/Home', (Route<dynamic> route) => false);
@@ -261,5 +581,12 @@ class _SignupPageState extends State<SignupPage> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('email', _emailController.text);
+      xnm.getToken().then((value) => {
+        Firestore.instance
+            .collection('tokens')
+            .add({
+          'token': value,
+        }).then((value) => {})
+      });
   }
 }}

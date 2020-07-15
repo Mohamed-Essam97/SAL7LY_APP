@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -20,6 +21,7 @@ class MyMapSampleState extends State<MyMap> {
   List<Position> kk = [];
   Position gg;
   String searchAddr;
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,8 @@ class MyMapSampleState extends State<MyMap> {
     }
 
     return Scaffold(
-      body: Stack(
+      body:
+      Stack(
         children: <Widget>[
           GoogleMap(
             onMapCreated: onMapCreated,

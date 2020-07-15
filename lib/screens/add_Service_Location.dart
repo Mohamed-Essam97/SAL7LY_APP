@@ -1,25 +1,43 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sal7ly_firebase/global/Colors.dart' as myColors;
 import 'package:sal7ly_firebase/screens/serviceDetails.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddServiceLocation extends StatefulWidget {
   @override
   _AddServiceLocationState createState() => _AddServiceLocationState();
+} 
+
+
+class MapUtils {
+
+  MapUtils._();
+
+  static Future<void> openMap(double latitude, double longitude) async {
+    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    if (await canLaunch(googleUrl)) {
+      await launch(googleUrl);
+    } else {
+      throw 'Could not open the map.';
+    }
+  }
 }
 
 class _AddServiceLocationState extends State<AddServiceLocation> {
-
-  List <ad> service_type_name=new List();
+  List<ad> service_type_name = new List();
   var Lat;
   var Long;
-  List <DocumentReference> service_type_refernce=new List();
-  List  <String> splizatian_name=new List();
-  List <DocumentReference> splizatin_refernce=new List();
+  List<DocumentReference> service_type_refernce = new List();
+  List<String> splizatian_name = new List();
+  List<DocumentReference> splizatin_refernce = new List();
+
+
 
 
 
@@ -31,23 +49,27 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
     Lat = position.latitude;
     Long = position.longitude;
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context)=>ServiceDetails(Lat:Lat,Long:Long,serviceTypeList:service_type_name,service_type_refernce:spl,splizatian_name:splizatian_name,splizatin_refernce:splizatin_refernce),
+      builder: (context) => ServiceDetails(
+          Lat: Lat,
+          Long: Long,
+          serviceTypeList: service_type_name,
+          service_type_refernce: spl,
+          splizatian_name: splizatian_name,
+          splizatin_refernce: splizatin_refernce),
     ));
   }
-  List <ad> type=new List();
-  List <ad> spl=new List();
+
+  List<ad> type = new List();
+  List<ad> spl = new List();
 
   @override
   Widget build(BuildContext context) {
     var deviceInfo = MediaQuery.of(context);
     return Scaffold(
-        body:StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance.collection('service_type')
-
-                .snapshots(),
+        body: StreamBuilder<QuerySnapshot>(
+            stream: Firestore.instance.collection('service_type').snapshots(),
             builder:
-                (BuildContext context,
-                AsyncSnapshot<QuerySnapshot> snapshot) {
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (!snapshot.hasData)
                 return new Text(
                   'Error: ${snapshot.error.toString()}',
@@ -60,22 +82,21 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
                     textDirection: TextDirection.ltr,
                   );
                 default:
-                  DocumentReference  amr ;
-                  type=new List();
+                  DocumentReference amr;
+                  type = new List();
                   service_type_name = new List();
                   snapshot.data.documents.forEach((element) {
-                    service_type_name.add(new ad(element['name'],element.reference,amr));
+                    service_type_name
+                        .add(new ad(element['name'], element.reference, amr));
                     service_type_refernce.add(element.reference);
-                    type.add(new ad(element["name"], element.reference,amr));
-
+                    type.add(new ad(element["name"], element.reference, amr));
                   });
 
-                  return  StreamBuilder<QuerySnapshot>(
-                      stream: Firestore.instance.collection('specialization')
-
+                  return StreamBuilder<QuerySnapshot>(
+                      stream: Firestore.instance
+                          .collection('specialization')
                           .snapshots(),
-                      builder:
-                          (BuildContext context,
+                      builder: (BuildContext context,
                           AsyncSnapshot<QuerySnapshot> snapshott) {
                         if (!snapshott.hasData)
                           return new Text(
@@ -89,22 +110,22 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
                               textDirection: TextDirection.ltr,
                             );
                           default:
-                            spl=new List();
+                            spl = new List();
                             splizatian_name = new List();
                             splizatin_refernce = new List();
                             snapshott.data.documents.forEach((element) {
                               splizatian_name.add(element["name"]);
                               splizatin_refernce.add(element["service_type"]);
-                              spl.add(new ad(element["name"], element.reference,element['service_type']));
-
+                              spl.add(new ad(element["name"], element.reference,
+                                  element['service_type']));
                             });
                             return Container(
-
                               color: myColors.background,
                               child: Column(
                                 children: <Widget>[
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 50, bottom: 0),
+                                    padding: const EdgeInsets.only(
+                                        top: 50, bottom: 0),
                                     child: Row(
                                       children: <Widget>[
                                         Transform.translate(
@@ -115,9 +136,11 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
                                               Navigator.pop(context);
                                             },
                                           ),
-                                          offset: Offset(10,0),
+                                          offset: Offset(10, 0),
                                         ),
-                                        SizedBox(width: 38,),
+                                        SizedBox(
+                                          width: 38,
+                                        ),
                                         Text(
                                           "Service Location",
                                           style: TextStyle(
@@ -146,6 +169,7 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
                                       child: GestureDetector(
                                         onTap: () {
                                           getAndSaveCurrentLocation();
+
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
@@ -155,10 +179,12 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
                                               width: 1.0,
                                             ),
                                             color: Colors.transparent,
-                                            borderRadius: BorderRadius.circular(10.0),
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
                                           ),
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: <Widget>[
                                               SvgPicture.asset(
                                                 "assets/icons/near.svg",
@@ -187,45 +213,35 @@ class _AddServiceLocationState extends State<AddServiceLocation> {
                                     child: InkWell(
                                         onTap: () {
                                           Navigator.pushNamed(context, '/Map');
+                                       // MapUtils.openMap(-3.823216,-38.481700);
                                         },
                                         child: Center(
                                           child: Text(
                                             'Select it manually',
-                                            style: TextStyle(fontSize: 15, fontFamily: 'SemiBold'),
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontFamily: 'SemiBold'),
                                           ),
                                         )),
                                   ),
                                 ],
                               ),
                             );
-                        }});
-              }}));
+                        }
+                      });
+              }
+            }));
   }
-
-
-
 }
-class ad{
+
+class ad {
   String x;
   DocumentReference xs;
   DocumentReference service_Type_Ref;
-  ad(this.x,this.xs,this.service_Type_Ref);
-  get xx=>x;
-  get xxs=>xs;
-
-
+  ad(this.x, this.xs, this.service_Type_Ref);
+  get xx => x;
+  get xxs => xs;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 /*
 import 'package:cloud_firestore/cloud_firestore.dart';

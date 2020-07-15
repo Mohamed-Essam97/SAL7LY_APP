@@ -21,8 +21,8 @@ class _SplashState extends State<Splash> {
     var email = prefs.getString('email');
     if (email == null) {
       print(email);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          '/Login', (Route<dynamic> route) => false);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/Login', (Route<dynamic> route) => false);
     } else if (email != null) {
       Firestore.instance
           .collection('service_owner')
@@ -37,7 +37,7 @@ class _SplashState extends State<Splash> {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                       '/Home', (Route<dynamic> route) => false);
                   print(data.documents.length);
-                } else if(doc["email"] != email ){
+                } else if (doc["email"] != email) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                       '/Login', (Route<dynamic> route) => false);
                 }
@@ -56,18 +56,20 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: <Widget>[
-          Container(
-            color: myColors.red,
-          ),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Image(
-                  image: AssetImage('assets/Logo.png'),
+                SizedBox(
+                  width: 250,
+                  height: 250,
+                  child: Image(
+                    image: AssetImage('assets/sal7lyLogo.png'),
+                  ),
                 ),
                 SizedBox(
                   height: 10,
@@ -77,15 +79,24 @@ class _SplashState extends State<Splash> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                    SizedBox(
-                      child: Image(
-                        image: AssetImage('assets/Logo.png'),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 2.0),
+                        child: SizedBox(
+                          child: Image(
+                            image: AssetImage('assets/sal7lyLogo.png'),
+                          ),
+                          height: 62,
+                          width: 32,
+                        ),
                       ),
-                      height: 50,
-                      width: 25,
-                    ),
-                    Text('ALHLY',style:TextStyle(fontFamily: 'Boldd',fontSize: 50,color: Colors.white),)
-                  ],
+                      Text(
+                        'ALHLY',
+                        style: TextStyle(
+                            fontFamily: 'Boldd',
+                            fontSize: 70,
+                            color: myColors.red),
+                      )
+                    ],
                   ),
                 )
               ],
@@ -112,14 +123,14 @@ class _SplashState extends State<Splash> {
                   width: 24,
                   height: 24,
                 ),
-*//*
+*/ /*
 
 */
 /*
                 CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
-*//*
+*/ /*
 
               ],
             ),

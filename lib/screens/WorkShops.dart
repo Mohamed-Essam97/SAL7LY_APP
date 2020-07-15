@@ -85,6 +85,9 @@ class _Work_ShopsState extends State<Work_Shops> {
     );
   }
 
+
+  List<String> phones = [];
+
   String serviceName;
   String serviceID ;
   Widget drawScreen(BuildContext context) {
@@ -103,6 +106,7 @@ class _Work_ShopsState extends State<Work_Shops> {
               onTap: () {
                 serviceID = document['service_id'].toString();
                 serviceName = document['name'].toString();
+                phones = List.from(document['phone']);
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context)=>ServiceProfile(serviceID:serviceID,serviceName:serviceName),
                 ));

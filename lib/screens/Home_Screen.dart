@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sal7ly_firebase/firebase_login/services/usermanagment.dart';
 import 'package:sal7ly_firebase/screens/FormDemo.dart';
 import 'package:sal7ly_firebase/screens/add_Service.dart';
+import 'package:sal7ly_firebase/screens/masseges.dart';
 import 'package:sal7ly_firebase/share_ui/navigation_drawer.dart';
 import 'package:sal7ly_firebase/screens/chat.dart';
 import 'package:sal7ly_firebase/screens/profile.dart';
@@ -39,7 +41,7 @@ class _Home_Screen_MainState extends State<Home_Screen_Main> {
   int currentTab = 0; // to keep track of active tab index
   final List<Widget> screens = [
     Work_Shops(),
-    Chat(),
+    Listchat(),
     Profile(),
     Search(),
   ]; // to store nested tabs
@@ -53,6 +55,65 @@ class _Home_Screen_MainState extends State<Home_Screen_Main> {
     prefs.remove('email');
     Navigator.of(context).pushNamedAndRemoveUntil(
         '/Login', (Route<dynamic> route) => false);
+  }
+
+  String userId;
+  Future<String> getUserId() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    print(user.uid);
+    userId = user.uid;
+    return user.uid.toString();
+  }
+
+  Widget drawer()
+  {
+    return new StreamBuilder(
+        stream: Firestore.instance
+            .collection('service_owner')
+            .document(userId)
+            .snapshots(),
+        builder: (context, snapshots) {
+          if (!snapshots.hasData) {
+            return Container(
+              width: 110.0,
+              height: 110.0,
+              decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                image: new DecorationImage(
+                  image: AssetImage('assets/first.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            );
+          }else
+            {
+              var userDocument = snapshots.data;
+              // ignore: missing_return
+              return  Drawer(
+                child: Column(
+                  children: [
+                    Container(
+                      width: 110.0,
+                      height: 110.0,
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                          image: NetworkImage(userDocument["imageurl"].toString()),
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      title: Text("Home"),
+                    )
+                  ],
+                ),
+              );
+            }
+
+        });
+
+
+
   }
 
   @override
@@ -72,7 +133,7 @@ class _Home_Screen_MainState extends State<Home_Screen_Main> {
           )
           ],
       ),
-      drawer: NavigationDrawer(),
+      //drawer:NavigationDrawer(),
       body: PageStorage(
         child: currentScreen,
         bucket: bucket,
@@ -162,7 +223,7 @@ class _Home_Screen_MainState extends State<Home_Screen_Main> {
                       onPressed: () {
                         setState(() {
                           currentScreen =
-                              Chat(); // if user taps on this dashboard tab will be active
+                              Listchat(); // if user taps on this dashboard tab will be active
                           currentTab = 2;
                         });
                       },
